@@ -3388,11 +3388,17 @@ function App() {
   const [active, setActive] = useState('cover');
   const [mode, setMode] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 760 ? 'mobile' : 'desktop');
   const [navOpen, setNavOpen] = useState(false);
+  const [realPhone, setRealPhone] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 760);
   const isMobile = mode === 'mobile';
   const scrollRef = useRef(null);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [active]);
+  useEffect(() => {
+    const onR = () => setRealPhone(window.innerWidth <= 760);
+    window.addEventListener('resize', onR);
+    return () => window.removeEventListener('resize', onR);
+  }, []);
   const go = id => {
     setActive(id);
     setNavOpen(false);
@@ -3435,7 +3441,17 @@ function App() {
 
   /* ───────── MOBILE ───────── */
   if (isMobile) {
-    const frame = {
+    const frame = realPhone ? {
+      width: '100%',
+      margin: 0,
+      borderRadius: 0,
+      border: 'none',
+      background: C.bg,
+      height: '100dvh',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden'
+    } : {
       maxWidth: 420,
       margin: '18px auto',
       borderRadius: 30,
@@ -3447,14 +3463,21 @@ function App() {
       display: 'flex',
       flexDirection: 'column'
     };
+    const outer = realPhone ? {
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: C.bg
+    } : {
+      minHeight: '100vh',
+      background: 'linear-gradient(160deg,#EDE8F7,#F7F6FB 40%)'
+    };
     return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: '100vh',
-        background: 'linear-gradient(160deg,#EDE8F7,#F7F6FB 40%)'
-      }
+      style: outer
     }, /*#__PURE__*/React.createElement(ModeToggle, {
       mode: mode,
-      setMode: setMode
+      setMode: setMode,
+      realPhone: realPhone
     }), /*#__PURE__*/React.createElement("div", {
       style: frame
     }, !isCover && /*#__PURE__*/React.createElement("div", {
@@ -3608,7 +3631,8 @@ function App() {
       }
     }, /*#__PURE__*/React.createElement(ModeToggle, {
       mode: mode,
-      setMode: setMode
+      setMode: setMode,
+      realPhone: realPhone
     }), render());
   }
   return /*#__PURE__*/React.createElement("div", {
@@ -3618,7 +3642,8 @@ function App() {
     }
   }, /*#__PURE__*/React.createElement(ModeToggle, {
     mode: mode,
-    setMode: setMode
+    setMode: setMode,
+    realPhone: realPhone
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex'
@@ -3837,21 +3862,23 @@ function navBtn(primary) {
 }
 function ModeToggle({
   mode,
-  setMode
+  setMode,
+  realPhone
 }) {
   const isMobile = mode === 'mobile';
   const next = isMobile ? 'desktop' : 'mobile';
-  // small round FAB; bottom-right so it never overlaps headers/content
+  // small round FAB. On a real phone, lift it above the fixed Back/Next bar so it never overlaps.
+  const bottom = isMobile && realPhone ? 78 : isMobile ? 16 : 20;
   return /*#__PURE__*/React.createElement("button", {
     onClick: () => setMode(next),
     title: 'Switch to ' + next + ' view',
     style: {
       position: 'fixed',
-      bottom: isMobile ? 16 : 20,
-      right: isMobile ? 16 : 20,
+      bottom,
+      right: 16,
       zIndex: 60,
-      width: 46,
-      height: 46,
+      width: 44,
+      height: 44,
       borderRadius: '50%',
       border: 'none',
       cursor: 'pointer',
@@ -3860,14 +3887,12 @@ function ModeToggle({
       boxShadow: '0 6px 20px rgba(55,0,141,.35)',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      opacity: .92
     }
-  }, isMobile ?
-  /*#__PURE__*/
-  /* show desktop/monitor icon -> tap to go desktop */
-  React.createElement("svg", {
-    width: "22",
-    height: "22",
+  }, isMobile ? /*#__PURE__*/React.createElement("svg", {
+    width: "21",
+    height: "21",
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "#fff",
@@ -3890,12 +3915,9 @@ function ModeToggle({
     y1: "17",
     x2: "12",
     y2: "21"
-  })) :
-  /*#__PURE__*/
-  /* show phone icon -> tap to go mobile */
-  React.createElement("svg", {
-    width: "22",
-    height: "22",
+  })) : /*#__PURE__*/React.createElement("svg", {
+    width: "21",
+    height: "21",
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "#fff",
