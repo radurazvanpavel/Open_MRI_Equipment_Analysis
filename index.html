@@ -848,28 +848,25 @@ const REG_COLOR = {
   'Limbs & extremities': '#2AD1BC',
   'Abdomen & pelvis': '#C77D00'
 };
-/* Region totals across ALL 576 exams (Andreea's RegiuneAnatomica grouping), not just top-10 */
+/* Region totals across the 560 diagnostic exams (Andreea's RegiuneAnatomica grouping; Consults/control excluded as non-diagnostic) */
 const REG_TOTALS = [{
   r: 'Spine',
   n: 213,
-  pct: 37
+  pct: 38
 }, {
   r: 'Abdomen & pelvis',
   n: 122,
-  pct: 21
+  pct: 22
 }, {
   r: 'Limbs & extremities',
   n: 115,
-  pct: 20
+  pct: 21
 }, {
   r: 'Head & neck',
   n: 110,
-  pct: 19
-}, {
-  r: 'Consults / control',
-  n: 16,
-  pct: 3
+  pct: 20
 }];
+const REG_DENOM = 560;
 const SECTIONS = [{
   id: 'cover',
   n: '',
@@ -3179,60 +3176,41 @@ function SecTrajectory({
 function SecCaseload({
   isMobile
 }) {
-  const max = Math.max(...TOP_PROC.map(p => p.n));
-  const regForChart = REG_TOTALS.filter(r => r.r !== 'Consults / control');
-  // donut geometry
-  const total576 = 576;
+  const denom = REG_DENOM;
   let acc = 0;
   const segs = REG_TOTALS.map(r => {
-    const start = acc / total576;
+    const start = acc / denom;
     acc += r.n;
-    const end = acc / total576;
+    const end = acc / denom;
     return {
       ...r,
       start,
       end
     };
   });
-  const R = 64,
-    CX = 80,
-    CY = 80,
-    SW = 26,
+  const R = 66,
+    CX = 85,
+    CY = 85,
+    SW = 30,
     CIRC = 2 * Math.PI * R;
   const segColor = r => REG_COLOR[r] || '#D9D2E8';
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Case mix \xB7 what the unit scans"), /*#__PURE__*/React.createElement(H, {
     size: isMobile ? 22 : 26
-  }, "A spine and neuro core, with broad coverage"), /*#__PURE__*/React.createElement(Sub, null, "The clinical profile of the Open 1.2T across all ", total576, " examinations \u2014 the anatomical split (Andreea\u2019s grouping) and the ten most frequent individual exams."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'minmax(320px,1fr) minmax(0,1.5fr)',
-      gap: 18,
-      alignItems: 'stretch'
-    }
-  }, /*#__PURE__*/React.createElement(Card, {
-    pad: isMobile ? 16 : 22
+  }, "A spine and neuro core, with broad coverage"), /*#__PURE__*/React.createElement(Sub, null, "The clinical profile of the Open 1.2T by anatomical region (Andreea\u2019s grouping), across ", denom, " diagnostic examinations. Non-diagnostic consults/controls are excluded."), /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 18 : 28
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: '.08em',
-      textTransform: 'uppercase',
-      color: C.secondary,
-      marginBottom: 14
-    }
-  }, "Exams by region \xB7 all ", total576), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 20,
-      flexWrap: isMobile ? 'wrap' : 'nowrap'
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'auto 1fr',
+      gap: isMobile ? 20 : 44,
+      alignItems: 'center'
     }
   }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 160 160",
+    viewBox: "0 0 170 170",
     style: {
-      width: 150,
-      height: 150,
-      flexShrink: 0
+      width: isMobile ? 180 : 210,
+      height: isMobile ? 180 : 210,
+      margin: isMobile ? '0 auto' : 0
     }
   }, segs.map((s, i) => {
     const dash = (s.end - s.start) * CIRC;
@@ -3252,134 +3230,74 @@ function SecCaseload({
     });
   }), /*#__PURE__*/React.createElement("text", {
     x: CX,
-    y: CY - 4,
+    y: CY - 6,
     textAnchor: "middle",
     fontFamily: "'Red Hat Display'",
     fontWeight: "900",
-    fontSize: "26",
+    fontSize: "34",
     fill: C.ink
-  }, total576), /*#__PURE__*/React.createElement("text", {
+  }, denom), /*#__PURE__*/React.createElement("text", {
     x: CX,
-    y: CY + 15,
+    y: CY + 16,
     textAnchor: "middle",
-    fontSize: "10",
+    fontSize: "11",
     fill: C.inkM
-  }, "examinations")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      minWidth: 150
-    }
-  }, REG_TOTALS.map((r, i) => /*#__PURE__*/React.createElement("div", {
+  }, "diagnostic exams")), /*#__PURE__*/React.createElement("div", null, REG_TOTALS.map((r, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
+    style: {
+      marginBottom: i < REG_TOTALS.length - 1 ? 16 : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
-      gap: 8,
-      marginBottom: 9
+      gap: 10,
+      marginBottom: 6
     }
   }, /*#__PURE__*/React.createElement("i", {
     style: {
-      width: 11,
-      height: 11,
-      borderRadius: 3,
+      width: 13,
+      height: 13,
+      borderRadius: 4,
       background: segColor(r.r),
       display: 'inline-block',
       flexShrink: 0
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 12.5,
-      fontWeight: 600,
+      fontSize: 14.5,
+      fontWeight: 700,
       color: C.ink,
       flex: 1
     }
   }, r.r), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 12.5,
+      fontSize: 15,
       fontWeight: 800,
-      color: C.inkM
+      color: segColor(r.r)
     }
   }, r.pct, "%"), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 11,
+      fontSize: 12.5,
       color: C.inkF,
-      width: 30,
+      width: 38,
       textAlign: 'right'
     }
-  }, r.n)))))), /*#__PURE__*/React.createElement(Card, {
-    pad: isMobile ? 16 : 22
-  }, /*#__PURE__*/React.createElement("div", {
+  }, r.n)), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: '.08em',
-      textTransform: 'uppercase',
-      color: C.secondary,
-      marginBottom: 14
-    }
-  }, "Top 10 individual exams"), TOP_PROC.map(p => /*#__PURE__*/React.createElement("div", {
-    key: p.p,
-    style: {
-      marginBottom: 11
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginBottom: 4
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 12.5,
-      fontWeight: 600,
-      color: C.ink
-    }
-  }, p.p), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 12.5,
-      fontWeight: 800,
-      color: C.inkM
-    }
-  }, p.n)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      height: 12,
+      height: 9,
       background: C.lineS,
-      borderRadius: 5,
+      borderRadius: 99,
       overflow: 'hidden'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      width: p.n / max * 100 + '%',
+      width: r.pct + '%',
       height: '100%',
-      borderRadius: 5,
-      background: REG_COLOR[p.reg]
+      borderRadius: 99,
+      background: segColor(r.r)
     }
-  })))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 14,
-      flexWrap: 'wrap',
-      marginTop: 10,
-      fontSize: 11,
-      fontWeight: 600
-    }
-  }, regForChart.map(r => /*#__PURE__*/React.createElement("span", {
-    key: r.r,
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 5,
-      color: C.inkM
-    }
-  }, /*#__PURE__*/React.createElement("i", {
-    style: {
-      width: 10,
-      height: 10,
-      borderRadius: 3,
-      background: REG_COLOR[r.r],
-      display: 'inline-block'
-    }
-  }), r.r))))), /*#__PURE__*/React.createElement("div", {
+  }))))))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
       gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
@@ -3400,7 +3318,7 @@ function SecCaseload({
       color: C.medima,
       lineHeight: 1
     }
-  }, "37%"), /*#__PURE__*/React.createElement("div", {
+  }, "38%"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       fontWeight: 700,
@@ -3424,7 +3342,7 @@ function SecCaseload({
       color: C.secondary,
       lineHeight: 1
     }
-  }, "56%"), /*#__PURE__*/React.createElement("div", {
+  }, "58%"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       fontWeight: 700,
@@ -3462,7 +3380,7 @@ function SecCaseload({
       marginTop: 6,
       lineHeight: 1.5
     }
-  }, "No single dependency: abdomen & pelvis (21%) and limbs (20%) each add a fifth of volume, supporting the image-quality verdict."))));
+  }, "No single dependency: abdomen & pelvis (22%) and limbs (21%) each add a fifth of volume, supporting the image-quality verdict."))));
 }
 
 /* ════════════════════ APP SHELL ════════════════════ */
@@ -3519,7 +3437,7 @@ function App() {
   if (isMobile) {
     const frame = {
       maxWidth: 420,
-      margin: '52px auto 18px',
+      margin: '18px auto',
       borderRadius: 30,
       boxShadow: '0 24px 60px rgba(29,29,41,.22)',
       border: '1px solid ' + C.line,
@@ -3922,52 +3840,80 @@ function ModeToggle({
   setMode
 }) {
   const isMobile = mode === 'mobile';
-  const wrapStyle = isMobile ? {
-    position: 'fixed',
-    top: 6,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 50,
-    display: 'inline-flex',
-    padding: 3,
-    background: C.panel,
-    borderRadius: 999,
-    boxShadow: '0 4px 16px rgba(29,29,41,.14)',
-    border: '1px solid ' + C.line
-  } : {
-    position: 'fixed',
-    top: 14,
-    right: 14,
-    zIndex: 50,
-    display: 'inline-flex',
-    padding: 3,
-    background: C.panel,
-    borderRadius: 999,
-    boxShadow: '0 4px 16px rgba(29,29,41,.14)',
-    border: '1px solid ' + C.line
-  };
-  return /*#__PURE__*/React.createElement("div", {
-    style: wrapStyle
-  }, [{
-    id: 'desktop',
-    l: 'Desktop'
-  }, {
-    id: 'mobile',
-    l: 'Mobile'
-  }].map(m => /*#__PURE__*/React.createElement("button", {
-    key: m.id,
-    onClick: () => setMode(m.id),
+  const next = isMobile ? 'desktop' : 'mobile';
+  // small round FAB; bottom-right so it never overlaps headers/content
+  return /*#__PURE__*/React.createElement("button", {
+    onClick: () => setMode(next),
+    title: 'Switch to ' + next + ' view',
     style: {
-      padding: '7px 15px',
-      borderRadius: 999,
-      fontSize: 12,
-      fontWeight: 700,
-      cursor: 'pointer',
+      position: 'fixed',
+      bottom: isMobile ? 16 : 20,
+      right: isMobile ? 16 : 20,
+      zIndex: 60,
+      width: 46,
+      height: 46,
+      borderRadius: '50%',
       border: 'none',
-      background: mode === m.id ? C.medima : 'transparent',
-      color: mode === m.id ? '#fff' : C.inkM
+      cursor: 'pointer',
+      background: C.medima,
+      color: '#fff',
+      boxShadow: '0 6px 20px rgba(55,0,141,.35)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     }
-  }, m.l)));
+  }, isMobile ?
+  /*#__PURE__*/
+  /* show desktop/monitor icon -> tap to go desktop */
+  React.createElement("svg", {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "#fff",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "2",
+    y: "3",
+    width: "20",
+    height: "14",
+    rx: "2"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "8",
+    y1: "21",
+    x2: "16",
+    y2: "21"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "17",
+    x2: "12",
+    y2: "21"
+  })) :
+  /*#__PURE__*/
+  /* show phone icon -> tap to go mobile */
+  React.createElement("svg", {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "#fff",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "6",
+    y: "2",
+    width: "12",
+    height: "20",
+    rx: "2"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "11",
+    y1: "18",
+    x2: "13",
+    y2: "18"
+  })));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 } catch(e){console.error(e);document.getElementById("fallback").style.display="block";}
