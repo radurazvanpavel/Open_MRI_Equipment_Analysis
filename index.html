@@ -1,0 +1,3577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Open MRI Equipment Analysis — Târgu Mureş · Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700&family=Red+Hat+Display:wght@700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  html,body{margin:0;padding:0;background:#F7F6FB;font-family:'Red Hat Text',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+  *{box-sizing:border-box;}
+  #fallback{display:none;max-width:520px;margin:60px auto;padding:24px;text-align:center;color:#6B6580;}
+  #fallback h2{color:#37008D;font-size:18px;margin:0 0 8px;}
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-thumb{background:#D8D2E6;border-radius:8px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="fallback"><h2>Could not load the application</h2><p>External libraries (React) could not be downloaded. Check the connection or reload the page.</p></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin onerror="document.getElementById('fallback').style.display='block'"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin onerror="document.getElementById('fallback').style.display='block'"></script>
+<script>
+function __mount(){
+  if(typeof React==='undefined'||typeof ReactDOM==='undefined'){document.getElementById('fallback').style.display='block';return;}
+  try {
+const {
+  useState,
+  useMemo,
+  useEffect,
+  useRef
+} = React;
+
+/* ── MEDIMA BRAND — LIGHT THEME ── */
+const C = {
+  medima: '#37008D',
+  secondary: '#7D5DE7',
+  lilac: '#AEA9FF',
+  accent: '#2AD1BC',
+  bg: '#F7F6FB',
+  panel: '#FFFFFF',
+  panel2: '#FBFAFE',
+  ink: '#1D1D29',
+  inkM: '#6B6580',
+  inkF: '#A39DB8',
+  line: '#E7E3EE',
+  lineS: '#EFEDF5',
+  ok: '#1FA89A',
+  warn: '#C77D00',
+  bad: '#D6452C',
+  badSoft: '#FBEDEA',
+  medimaSoft: '#F1EAFB',
+  accentSoft: '#E7F8F5',
+  okSoft: '#E6F6F3',
+  warnSoft: '#FBF1E0'
+};
+
+/* ════════════════════ DATA (verified 1:1 against Andreea's deck + source Excels) ════════════════════ */
+const META = {
+  period: '16 March – 16 June 2026',
+  months: '3 months',
+  exams: 576,
+  patients: 472,
+  specialties: 30,
+  unit: 'Open MRI 1.2T (Fuji)',
+  site: 'Târgu Mureș',
+  bench: 'Sibiu 3T'
+};
+
+/* Slide 3 — segments/day before NHS, full network (31 centers) */
+const NETWORK = [{
+  c: 'Berceni',
+  v: 0.3,
+  t: '3T'
+}, {
+  c: 'Craiova',
+  v: 1.0,
+  t: '3T'
+}, {
+  c: 'Zalău',
+  v: 2.0,
+  t: '1.5T'
+}, {
+  c: 'Jiului',
+  v: 2.1,
+  t: '0.5T'
+}, {
+  c: 'Miercurea-Ciuc',
+  v: 2.3,
+  t: '1.5T'
+}, {
+  c: 'Tg Jiu',
+  v: 2.4,
+  t: '1.5T'
+}, {
+  c: 'Arad',
+  v: 2.9,
+  t: '1.5T'
+}, {
+  c: 'Otopeni',
+  v: 3.0,
+  t: '3T'
+}, {
+  c: 'Giurgiu',
+  v: 3.4,
+  t: '1.5T'
+}, {
+  c: 'Bacău',
+  v: 3.5,
+  t: '1.5T'
+}, {
+  c: 'Vaslui',
+  v: 3.7,
+  t: '1.5T'
+}, {
+  c: 'Baia-Mare',
+  v: 3.8,
+  t: '1.5T'
+}, {
+  c: 'Galați',
+  v: 3.9,
+  t: '3T'
+}, {
+  c: 'Reșița',
+  v: 4.2,
+  t: '1.5T'
+}, {
+  c: 'Petroșani',
+  v: 4.7,
+  t: '1.5T'
+}, {
+  c: 'Târgoviște',
+  v: 5.0,
+  t: '1.5T'
+}, {
+  c: 'Botoșani',
+  v: 5.3,
+  t: '1.5T'
+}, {
+  c: 'Focșani',
+  v: 5.4,
+  t: '1.5T'
+}, {
+  c: 'Bistrița',
+  v: 5.7,
+  t: '1.5T'
+}, {
+  c: 'Deva',
+  v: 5.9,
+  t: '1.5T'
+}, {
+  c: 'Slobozia',
+  v: 5.9,
+  t: '1.5T'
+}, {
+  c: 'Alba-Iulia',
+  v: 6.4,
+  t: '1.5T'
+}, {
+  c: 'Tulcea',
+  v: 7.0,
+  t: '1.5T'
+}, {
+  c: 'Buzău',
+  v: 7.1,
+  t: '1.5T'
+}, {
+  c: 'Sibiu',
+  v: 7.3,
+  t: '3T'
+}, {
+  c: 'Oradea',
+  v: 7.8,
+  t: '1.5T'
+}, {
+  c: 'Brăila',
+  v: 8.5,
+  t: '1.5T'
+}, {
+  c: 'Satu Mare',
+  v: 8.6,
+  t: '1.5T'
+}, {
+  c: 'Călărași',
+  v: 10.1,
+  t: '1.5T'
+}, {
+  c: 'Târgu Mureș',
+  v: 10.9,
+  t: '1.2T'
+}, {
+  c: 'Virtuții',
+  v: 11.2,
+  t: '1.5T'
+}];
+const BY_TYPE = (() => {
+  const g = {};
+  NETWORK.forEach(n => {
+    (g[n.t] = g[n.t] || []).push(n.v);
+  });
+  return ['0.5T', '1.2T', '1.5T', '3T'].map(t => ({
+    t,
+    n: g[t].length,
+    avg: +(g[t].reduce((a, b) => a + b, 0) / g[t].length).toFixed(2),
+    isFuji: t === '1.2T'
+  }));
+})();
+
+/* Slide 6 — productivity segments/day (Private LFL) by region: TM vs Sibiu */
+const PROD = [{
+  r: 'Spine',
+  tm: 4.02,
+  sb: 5.21
+}, {
+  r: 'Limbs & extremities',
+  tm: 2.11,
+  sb: 2.91
+}, {
+  r: 'Head & neck',
+  tm: 2.70,
+  sb: 2.36
+}, {
+  r: 'Abdomen & pelvis',
+  tm: 2.06,
+  sb: 1.74
+}];
+const PROD_TOTAL = {
+  tm: 10.89,
+  sb: 12.22
+};
+
+/* Slide 5 — mean scan times (min) by anatomical region: TM vs Sibiu */
+const SCAN_REGION = [{
+  r: 'Spine',
+  tm: 32.3,
+  sb: 31.8
+}, {
+  r: 'Abdomen & pelvis',
+  tm: 38.5,
+  sb: 30.9
+}, {
+  r: 'Limbs & extremities',
+  tm: 27.1,
+  sb: 20.9
+}, {
+  r: 'Head & neck',
+  tm: 29.4,
+  sb: 24.4
+}];
+
+/* Drill-down scan times (Comparatie…xlsx) — Planned vs Real, TM vs Sibiu */
+const SCAN_DETAIL = [{
+  p: 'Lumbosacral spine native',
+  cat: 'Spine',
+  pl: 35,
+  tm: 16.78,
+  sb: 15.90
+}, {
+  p: 'Lumbar spine native',
+  cat: 'Spine',
+  pl: 20,
+  tm: 15.83,
+  sb: 16.48
+}, {
+  p: 'Brain with contrast',
+  cat: 'Head & neck',
+  pl: 35,
+  tm: 29.58,
+  sb: 23.98
+}, {
+  p: 'Brain native',
+  cat: 'Head & neck',
+  pl: 30,
+  tm: 21.73,
+  sb: 21.23
+}, {
+  p: 'Knee native',
+  cat: 'Limbs & extremities',
+  pl: 25,
+  tm: 19.73,
+  sb: 16.28
+}, {
+  p: 'Pelvis native + contrast',
+  cat: 'Abdomen & pelvis',
+  pl: 45,
+  tm: 39.57,
+  sb: 31.10
+}, {
+  p: 'Shoulder native',
+  cat: 'Limbs & extremities',
+  pl: 25,
+  tm: 22.42,
+  sb: 19.23
+}, {
+  p: 'Cervical spine native',
+  cat: 'Spine',
+  pl: 35,
+  tm: 10.28,
+  sb: 15.68
+}, {
+  p: 'Abdomen + pelvis native',
+  cat: 'Abdomen & pelvis',
+  pl: 70,
+  tm: 47.62,
+  sb: 42.20
+}, {
+  p: 'Multiparametric prostate',
+  cat: 'Abdomen & pelvis',
+  pl: 35,
+  tm: 39.60,
+  sb: 35.15
+}, {
+  p: 'Brain + angio native',
+  cat: 'Head & neck',
+  pl: 40,
+  tm: 22.05,
+  sb: 30.28
+}, {
+  p: 'Right knee native',
+  cat: 'Limbs & extremities',
+  pl: 25,
+  tm: 20.25,
+  sb: 13.02
+}, {
+  p: 'Upper abdomen contrast',
+  cat: 'Abdomen & pelvis',
+  pl: 40,
+  tm: 29.23,
+  sb: 22.58
+}, {
+  p: 'Pituitary with contrast',
+  cat: 'Head & neck',
+  pl: 35,
+  tm: 26.98,
+  sb: 22.27
+}, {
+  p: 'Thoracic spine native',
+  cat: 'Spine',
+  pl: 25,
+  tm: 19.52,
+  sb: 27.65
+}, {
+  p: '3-region spine native',
+  cat: 'Spine',
+  pl: 60,
+  tm: 39.78,
+  sb: 47.83
+}, {
+  p: 'Bilateral knee native',
+  cat: 'Limbs & extremities',
+  pl: 45,
+  tm: 36.38,
+  sb: 36.43
+}, {
+  p: 'Hip coxofemoral native',
+  cat: 'Limbs & extremities',
+  pl: 25,
+  tm: 15.58,
+  sb: 17.20
+}];
+
+/* Slide 7 / 9 — referrals by specialty (of 575 valid, 30 specialties) */
+const REFERRALS = [{
+  s: 'Neurology',
+  n: 153,
+  pct: 27,
+  stars: 5,
+  note: 'Largest referral source'
+}, {
+  s: 'Patient self-referral',
+  n: 108,
+  pct: 19,
+  self: true,
+  note: 'Nearly 1 in 5 exams, no medical referral'
+}, {
+  s: 'Orthopaedics',
+  n: 64,
+  pct: 11,
+  stars: 5,
+  note: 'Strongest musculoskeletal demand'
+}, {
+  s: 'Neurosurgery',
+  n: 35,
+  pct: 6,
+  stars: 5
+}, {
+  s: 'Gastroenterology',
+  n: 28,
+  pct: 5,
+  stars: 5
+}, {
+  s: 'Urology',
+  n: 26,
+  pct: 5,
+  stars: 5
+}, {
+  s: 'Internal medicine',
+  n: 20,
+  pct: 3,
+  stars: 5
+}, {
+  s: 'Family medicine',
+  n: 17,
+  pct: 3,
+  stars: 5
+}];
+const REF_TOTAL = 575,
+  REF_SPEC = 30;
+
+/* Slide 8 — image quality, radiology team verdict */
+const QUALITY = [{
+  k: 'Signal-to-noise (SNR)',
+  v: 'Satisfactory clarity; acceptable SNR for routine diagnostic exams.',
+  t: 'ok'
+}, {
+  k: 'Contrast resolution',
+  v: 'Good tissue contrast; anatomy and tissue differences well visualized.',
+  t: 'ok'
+}, {
+  k: 'Artifact levels',
+  v: 'Low — reduced vs. conventional 1.5T / 3T systems, especially in routine exams.',
+  t: 'ok'
+}, {
+  k: 'Suitability — Spine',
+  v: 'Good to very good (cervical, thoracic, lumbar).',
+  t: 'ok'
+}, {
+  k: 'Suitability — Extremities',
+  v: 'Very good (knee, ankle, elbow, wrist).',
+  t: 'ok'
+}, {
+  k: 'Suitability — Brain',
+  v: 'Good to very good for routine brain MRI.',
+  t: 'ok'
+}, {
+  k: 'Overall diagnostic quality',
+  v: 'Qualitatively sufficient for routine diagnostic exams.',
+  t: 'ok'
+}, {
+  k: 'Main limitations',
+  v: 'Complex studies (dedicated pituitary, abdominal MRI) limited, mainly by motion artifacts.',
+  t: 'warn'
+}];
+
+/* Slide 10 — conclusions */
+const WINS = [{
+  h: 'Best-in-class start',
+  d: '11 segments/day from month 1 — the strongest debut on the network.'
+}, {
+  h: 'High efficiency',
+  d: 'Scans 25% faster than planned; capacity unlocked.'
+}, {
+  h: 'Competitive productivity',
+  d: '89% of Sibiu’s level for Private patients, at just 3 months of operation.'
+}, {
+  h: 'Validated demand',
+  d: '472 patients; diversified base of 30 specialties.'
+}];
+const GROW = [{
+  h: 'Expand NHS',
+  d: 'Starting June, the clinic entered into a contract with NHS.'
+}, {
+  h: 'Mature the Private ramp-up',
+  d: 'The private curve can approach 13–14 segments/day (Sibiu / Craiova level).'
+}, {
+  h: 'Optimize scheduling',
+  d: 'Protocols are being reviewed to cut scan times further and add slots/day.'
+}, {
+  h: 'Target specialties',
+  d: 'Develop referrals from under-represented specialties.'
+}];
+
+/* Network reference levels (computed from NETWORK) */
+const NET_MEDIAN = 5.0; // network median seg/day before NHS
+const T15_MEDIAN = 5.3; // 1.5T class median (24 centers) — the mature, dominant peer class
+const TM_VAL = 10.9;
+const YOUNG = ['Berceni', 'Craiova', 'Zalău', 'Jiului', 'Miercurea-Ciuc', 'Tg Jiu']; // newly opened, still in first weeks
+
+/* Monthly trajectory (from Pacienti…xlsx, exam dates) */
+const MONTHLY = [{
+  m: 'Mar',
+  priv: 82,
+  cas: 0,
+  total: 82,
+  note: 'Month 1 — soft launch (half month)'
+}, {
+  m: 'Apr',
+  priv: 156,
+  cas: 0,
+  total: 156,
+  note: 'First full month'
+}, {
+  m: 'May',
+  priv: 179,
+  cas: 0,
+  total: 179,
+  note: 'Private peak'
+}, {
+  m: 'Jun',
+  priv: 35,
+  cas: 124,
+  total: 159,
+  note: 'NHS contract goes live'
+}];
+
+/* Top procedures (from Pacienti…xlsx, Examinare) */
+const TOP_PROC = [{
+  p: 'Lumbar spine native',
+  n: 72,
+  reg: 'Spine'
+}, {
+  p: 'Brain native',
+  n: 54,
+  reg: 'Head & neck'
+}, {
+  p: 'Knee native',
+  n: 46,
+  reg: 'Limbs & extremities'
+}, {
+  p: 'Lumbosacral spine native',
+  n: 40,
+  reg: 'Spine'
+}, {
+  p: 'Cervical spine native',
+  n: 29,
+  reg: 'Spine'
+}, {
+  p: 'Shoulder native',
+  n: 20,
+  reg: 'Limbs & extremities'
+}, {
+  p: 'Pelvis native + contrast',
+  n: 17,
+  reg: 'Abdomen & pelvis'
+}, {
+  p: 'Whole abdomen + contrast',
+  n: 15,
+  reg: 'Abdomen & pelvis'
+}, {
+  p: 'Brain + angio native',
+  n: 13,
+  reg: 'Head & neck'
+}, {
+  p: '2-region spine (thoracic+lumbar)',
+  n: 12,
+  reg: 'Spine'
+}];
+const REG_COLOR = {
+  'Spine': '#37008D',
+  'Head & neck': '#7D5DE7',
+  'Limbs & extremities': '#2AD1BC',
+  'Abdomen & pelvis': '#C77D00'
+};
+/* Region totals across ALL 576 exams (Andreea's RegiuneAnatomica grouping), not just top-10 */
+const REG_TOTALS = [{
+  r: 'Spine',
+  n: 213,
+  pct: 37
+}, {
+  r: 'Abdomen & pelvis',
+  n: 122,
+  pct: 21
+}, {
+  r: 'Limbs & extremities',
+  n: 115,
+  pct: 20
+}, {
+  r: 'Head & neck',
+  n: 110,
+  pct: 19
+}, {
+  r: 'Consults / control',
+  n: 16,
+  pct: 3
+}];
+const SECTIONS = [{
+  id: 'cover',
+  n: '',
+  label: 'Cover',
+  sub: '',
+  hidden: true
+}, {
+  id: 'summary',
+  n: '01',
+  label: 'Summary',
+  sub: 'The big picture'
+}, {
+  id: 'rampup',
+  n: '02',
+  label: 'Ramp-up vs. network',
+  sub: 'Segments/day before NHS'
+}, {
+  id: 'trajectory',
+  n: '03',
+  label: 'Volume trajectory',
+  sub: 'Monthly ramp & NHS pivot'
+}, {
+  id: 'productivity',
+  n: '04',
+  label: 'Productivity vs. Sibiu',
+  sub: 'Segments/day · Private LFL'
+}, {
+  id: 'scantimes',
+  n: '05',
+  label: 'Scan-time efficiency',
+  sub: 'Actual vs. planned · vs. Sibiu'
+}, {
+  id: 'caseload',
+  n: '06',
+  label: 'Case mix',
+  sub: 'What the unit actually scans'
+}, {
+  id: 'referrals',
+  n: '07',
+  label: 'Referrals by specialty',
+  sub: 'Where demand comes from'
+}, {
+  id: 'quality',
+  n: '08',
+  label: 'Image quality',
+  sub: 'Radiology verdict'
+}, {
+  id: 'feedback',
+  n: '09',
+  label: 'Referrer feedback',
+  sub: 'Voice of the referrer'
+}, {
+  id: 'conclusions',
+  n: '10',
+  label: 'Conclusions',
+  sub: 'Bottom line & levers'
+}];
+const MEDIMA_TAG = c => c === 'Târgu Mureș' || c === 'Tg Mureș';
+
+/* ════════════════════ UI PRIMITIVES ════════════════════ */
+function InfoDot({
+  text
+}) {
+  const [open, setOpen] = useState(false);
+  return /*#__PURE__*/React.createElement("span", {
+    style: {
+      position: 'relative',
+      display: 'inline-flex',
+      verticalAlign: 'middle'
+    },
+    onMouseEnter: () => setOpen(true),
+    onMouseLeave: () => setOpen(false),
+    onClick: () => setOpen(o => !o)
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 15,
+      height: 15,
+      borderRadius: 99,
+      background: C.lineS,
+      color: C.inkM,
+      fontSize: 10,
+      fontWeight: 800,
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'help',
+      marginLeft: 5
+    }
+  }, "i"), open && /*#__PURE__*/React.createElement("span", {
+    style: {
+      position: 'absolute',
+      bottom: '130%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: 230,
+      background: C.ink,
+      color: '#fff',
+      fontSize: 11.5,
+      fontWeight: 500,
+      lineHeight: 1.5,
+      padding: '9px 11px',
+      borderRadius: 9,
+      zIndex: 50,
+      boxShadow: '0 8px 24px rgba(0,0,0,.25)',
+      textAlign: 'left',
+      letterSpacing: 0,
+      textTransform: 'none'
+    }
+  }, text));
+}
+const MEDIAN_DEF = 'Median = the middle value: half the centers score above it, half below. Unlike the average, it is not distorted by a few very high or very low (newly opened) centers, so it is the fairer benchmark.';
+function Kicker({
+  children
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: '.14em',
+      textTransform: 'uppercase',
+      color: C.secondary,
+      marginBottom: 10
+    }
+  }, children);
+}
+function H({
+  children,
+  mb = 4,
+  size = 26
+}) {
+  return /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 800,
+      color: C.ink,
+      fontSize: size,
+      lineHeight: 1.12,
+      margin: 0,
+      marginBottom: mb
+    }
+  }, children);
+}
+function Sub({
+  children
+}) {
+  return /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13.5,
+      color: C.inkM,
+      margin: '0 0 18px',
+      lineHeight: 1.5
+    }
+  }, children);
+}
+function Card({
+  children,
+  style,
+  pad = 18
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: C.panel,
+      border: '1px solid ' + C.line,
+      borderRadius: 16,
+      padding: pad,
+      boxShadow: '0 1px 2px rgba(29,29,41,.04)',
+      ...style
+    }
+  }, children);
+}
+function Stars({
+  n
+}) {
+  return /*#__PURE__*/React.createElement("span", {
+    style: {
+      letterSpacing: 1,
+      color: '#E8B33A',
+      fontSize: 14
+    }
+  }, '★'.repeat(n), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.line
+    }
+  }, '★'.repeat(5 - n)));
+}
+function Pill({
+  children,
+  tone = 'medima'
+}) {
+  const map = {
+    medima: [C.medimaSoft, C.medima],
+    accent: [C.accentSoft, C.ok],
+    warn: [C.warnSoft, C.warn],
+    bad: [C.badSoft, C.bad]
+  };
+  const [bg, fg] = map[tone];
+  return /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: bg,
+      color: fg,
+      fontSize: 11,
+      fontWeight: 700,
+      padding: '3px 9px',
+      borderRadius: 999,
+      whiteSpace: 'nowrap'
+    }
+  }, children);
+}
+function MedimaBadge() {
+  return /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 4,
+      background: C.medima,
+      color: '#fff',
+      fontSize: 9.5,
+      fontWeight: 800,
+      padding: '2px 7px',
+      borderRadius: 999,
+      letterSpacing: '.04em',
+      verticalAlign: 'middle'
+    }
+  }, "\u25C9 MEDIMA \xB7 TM");
+}
+
+/* ════════════════════ COVER (hero) ════════════════════ */
+function Cover({
+  isMobile,
+  go
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative',
+      borderRadius: isMobile ? 0 : 22,
+      overflow: 'hidden',
+      minHeight: isMobile ? '100%' : 'calc(100vh - 56px)',
+      display: 'flex',
+      background: 'linear-gradient(135deg, #24005C 0%, ' + C.medima + ' 48%, #5B3FD0 100%)'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 600 600",
+    style: {
+      position: 'absolute',
+      right: isMobile ? -180 : '4%',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: isMobile ? 460 : 'min(54%, 720px)',
+      opacity: isMobile ? .13 : .9,
+      pointerEvents: 'none'
+    }
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("radialGradient", {
+    id: "cv-core",
+    cx: "50%",
+    cy: "50%",
+    r: "50%"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0",
+    stopColor: C.accent
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "1",
+    stopColor: C.secondary
+  }))), [270, 230, 190, 150, 112, 76].map((r, i) => /*#__PURE__*/React.createElement("circle", {
+    key: i,
+    cx: "300",
+    cy: "300",
+    r: r,
+    fill: "none",
+    stroke: i % 2 ? C.lilac : '#fff',
+    strokeOpacity: isMobile ? .5 : 0.22 + i * 0.05,
+    strokeWidth: i === 3 ? 3 : 1.4
+  })), /*#__PURE__*/React.createElement("circle", {
+    cx: "300",
+    cy: "300",
+    r: "44",
+    fill: "url(#cv-core)",
+    opacity: isMobile ? .6 : .95
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative',
+      padding: isMobile ? '44px 28px' : '0 0 0 64px',
+      color: '#fff',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      maxWidth: isMobile ? '100%' : 620,
+      zIndex: 2
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9,
+      marginBottom: isMobile ? 22 : 28
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 10,
+      height: 10,
+      borderRadius: 3,
+      background: C.accent
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: '.18em',
+      color: C.lilac
+    }
+  }, "MEDIMA HEALTH \xB7 BOARD")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 700,
+      letterSpacing: '.24em',
+      color: C.lilac,
+      marginBottom: 16
+    }
+  }, "PERFORMANCE ANALYSIS"), /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      lineHeight: 1.03,
+      fontSize: isMobile ? 34 : 60,
+      margin: 0
+    }
+  }, "Open MRI Equipment", /*#__PURE__*/React.createElement("br", null), "Analysis \u2014 T\xE2rgu Mure\u0219"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: isMobile ? 15 : 19,
+      color: C.lilac,
+      fontWeight: 500,
+      margin: '22px 0 0',
+      maxWidth: 520,
+      lineHeight: 1.5
+    }
+  }, "Volume \xB7 Productivity \xB7 Operational efficiency vs. the Sibiu benchmark"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: isMobile ? '18px 22px' : '0',
+      marginTop: isMobile ? 28 : 38,
+      borderTop: isMobile ? 'none' : '1px solid rgba(255,255,255,.18)',
+      paddingTop: isMobile ? 0 : 24
+    }
+  }, [{
+    v: '89%',
+    l: 'of Sibiu productivity'
+  }, {
+    v: '-25%',
+    l: 'faster than planned'
+  }, {
+    v: '#2 / 31',
+    l: 'network ramp-up'
+  }, {
+    v: '5.0★',
+    l: 'referrer rating'
+  }].map((k, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      paddingRight: isMobile ? 0 : 34,
+      marginRight: isMobile ? 0 : 34,
+      borderRight: !isMobile && i < 3 ? '1px solid rgba(255,255,255,.18)' : 'none'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: isMobile ? 26 : 32,
+      lineHeight: 1
+    }
+  }, k.v), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: C.lilac,
+      marginTop: 5,
+      maxWidth: 120
+    }
+  }, k.l)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: isMobile ? 30 : 40,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 16,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => go('summary'),
+    style: {
+      padding: '14px 28px',
+      borderRadius: 12,
+      border: 'none',
+      background: '#fff',
+      color: C.medima,
+      fontWeight: 800,
+      fontSize: 14.5,
+      cursor: 'pointer',
+      boxShadow: '0 10px 28px rgba(0,0,0,.22)',
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9
+    }
+  }, "Begin ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 17,
+      lineHeight: 1
+    }
+  }, "\u2192")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      color: C.lilac
+    }
+  }, META.exams, " examinations \xB7 ", META.period))));
+}
+
+/* ════════════════════ SUMMARY ════════════════════ */
+function SecSummary({
+  isMobile,
+  go
+}) {
+  // Board-relevant KPIs: each is a benchmark-relative performance ratio, with a fill bar showing where it sits.
+  const kpis = [{
+    v: '89%',
+    l: 'of Sibiu productivity',
+    s: '10.89 vs 12.22 seg/day · Private',
+    fill: 89,
+    tone: C.medima,
+    go: 'productivity'
+  }, {
+    v: '-25%',
+    l: 'faster than planned',
+    s: 'unlocking slots/day',
+    fill: 75,
+    tone: C.ok,
+    good: true,
+    go: 'scantimes'
+  }, {
+    v: '#2',
+    l: 'of 31 in network ramp-up',
+    s: 'segments/day before NHS',
+    fill: 97,
+    tone: C.secondary,
+    go: 'rampup'
+  }, {
+    v: '5.0',
+    l: 'referrer rating',
+    s: 'top specialties · out of 5',
+    fill: 100,
+    tone: '#E8B33A',
+    star: true,
+    go: 'feedback'
+  }];
+  const map = [{
+    id: 'rampup',
+    t: 'Ramp-up vs. network',
+    d: 'Segments/day before NHS across all 31 centers, and by MRI type.'
+  }, {
+    id: 'scantimes',
+    t: 'Scan-time efficiency',
+    d: 'Actual vs. planned times and a peer comparison with Sibiu by region.'
+  }, {
+    id: 'productivity',
+    t: 'Productivity vs. Sibiu',
+    d: 'Segments/day for Private patients, benchmarked against a mature center.'
+  }, {
+    id: 'referrals',
+    t: 'Referrals by specialty',
+    d: 'Where demand comes from — referring specialties and self-referral.'
+  }, {
+    id: 'quality',
+    t: 'Image quality',
+    d: 'Diagnostic performance of the Open 1.2T unit.'
+  }, {
+    id: 'feedback',
+    t: 'Referrer feedback',
+    d: 'How referring doctors rate the service.'
+  }];
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Summary \xB7 ", META.unit), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 23 : 28
+  }, "Open MRI 1.2T \u2014 first 3 months"), /*#__PURE__*/React.createElement(Sub, null, META.site, " \xB7 ", META.period, " \xB7 ", META.exams, " examinations \xB7 internal ", META.bench, " benchmark (Private LFL)"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)',
+      gap: 14,
+      marginBottom: 24
+    }
+  }, kpis.map((k, i) => /*#__PURE__*/React.createElement("button", {
+    key: i,
+    onClick: () => go(k.go),
+    style: {
+      textAlign: 'left',
+      cursor: 'pointer',
+      display: 'block',
+      background: C.panel,
+      border: '1px solid ' + C.line,
+      borderRadius: 16,
+      padding: 18,
+      transition: 'all .15s'
+    },
+    onMouseEnter: e => {
+      e.currentTarget.style.borderColor = k.tone;
+      e.currentTarget.style.boxShadow = '0 4px 16px rgba(55,0,141,.10)';
+    },
+    onMouseLeave: e => {
+      e.currentTarget.style.borderColor = C.line;
+      e.currentTarget.style.boxShadow = 'none';
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: isMobile ? 30 : 38,
+      color: k.tone,
+      lineHeight: 1
+    }
+  }, k.v), k.star && /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#E8B33A',
+      fontSize: 16
+    }
+  }, "\u2605")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 8
+    }
+  }, k.l), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: C.inkM,
+      marginTop: 2,
+      minHeight: 28
+    }
+  }, k.s), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 6,
+      background: C.lineS,
+      borderRadius: 99,
+      overflow: 'hidden',
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: k.fill + '%',
+      height: '100%',
+      borderRadius: 99,
+      background: k.good ? 'linear-gradient(90deg,' + C.ok + ',' + C.accent + ')' : 'linear-gradient(90deg,' + k.tone + ',' + C.secondary + ')'
+    }
+  }))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      color: C.inkM,
+      textTransform: 'uppercase',
+      letterSpacing: '.06em',
+      marginBottom: 12
+    }
+  }, "Explore the analysis"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+      gap: 12
+    }
+  }, map.map((m, i) => /*#__PURE__*/React.createElement("button", {
+    key: i,
+    onClick: () => go(m.id),
+    style: {
+      textAlign: 'left',
+      cursor: 'pointer',
+      background: C.panel,
+      border: '1px solid ' + C.line,
+      borderRadius: 14,
+      padding: 16,
+      transition: 'all .15s',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 6
+    },
+    onMouseEnter: e => {
+      e.currentTarget.style.borderColor = C.secondary;
+      e.currentTarget.style.boxShadow = '0 4px 14px rgba(55,0,141,.10)';
+    },
+    onMouseLeave: e => {
+      e.currentTarget.style.borderColor = C.line;
+      e.currentTarget.style.boxShadow = 'none';
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: C.medima
+    }
+  }, m.t, " \u2192"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      lineHeight: 1.45
+    }
+  }, m.d)))));
+}
+
+/* ════════════════════ RAMP-UP vs NETWORK ════════════════════ */
+function SecRampup({
+  isMobile
+}) {
+  const [tab, setTab] = useState('clinic');
+  const sorted = [...NETWORK].sort((a, b) => b.v - a.v);
+  const max = 12; // fixed axis so reference lines map cleanly
+  const tmRank = sorted.findIndex(n => MEDIMA_TAG(n.c)) + 1;
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Network benchmark \xB7 before NHS"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Above the mature-peer benchmark \u2014 before NHS"), /*#__PURE__*/React.createElement(Sub, null, "Segments/day before NHS, vs. the network median and the 1.5T class median (the mature, dominant peer group). Newly opened centers, still in their first weeks, are marked so the comparison stays like-for-like."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'inline-flex',
+      alignItems: 'flex-start',
+      gap: 8,
+      background: C.panel2,
+      border: '1px solid ' + C.lineS,
+      borderRadius: 10,
+      padding: '9px 13px',
+      marginBottom: 16,
+      maxWidth: 680
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.secondary,
+      fontWeight: 800,
+      fontSize: 13
+    }
+  }, "Median"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      lineHeight: 1.5
+    }
+  }, "the middle value across centers (half above, half below). Unlike an average, it is not pulled up or down by a handful of newly opened or outlier centers, so it is the fairer benchmark.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'inline-flex',
+      padding: 3,
+      background: C.lineS,
+      borderRadius: 999,
+      marginBottom: 16
+    }
+  }, [{
+    id: 'clinic',
+    l: 'By clinic'
+  }, {
+    id: 'type',
+    l: 'By equipment type'
+  }].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    onClick: () => setTab(t.id),
+    style: {
+      padding: '7px 16px',
+      borderRadius: 999,
+      fontSize: 12.5,
+      fontWeight: 700,
+      cursor: 'pointer',
+      border: 'none',
+      background: tab === t.id ? C.panel : 'transparent',
+      color: tab === t.id ? C.medima : C.inkM,
+      boxShadow: tab === t.id ? '0 1px 3px rgba(29,29,41,.10)' : 'none'
+    }
+  }, t.l))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.85fr) minmax(300px,1fr)',
+      gap: 16,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 12 : 18
+  }, tab === 'clinic' ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 16,
+      flexWrap: 'wrap',
+      marginBottom: 12,
+      fontSize: 11.5,
+      fontWeight: 600
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.medima
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: C.medima,
+      display: 'inline-block'
+    }
+  }), "T\xE2rgu Mure\u0219"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.inkM
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: '#CFC8E0',
+      display: 'inline-block'
+    }
+  }), "1.5T centers"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.inkF
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: '#E6E1F0',
+      display: 'inline-block'
+    }
+  }), "newly opened"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.warn
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 14,
+      borderTop: '2px dashed ' + C.warn,
+      display: 'inline-block'
+    }
+  }), "1.5T median ", T15_MEDIAN), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.inkF
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 14,
+      borderTop: '2px dashed ' + C.inkF,
+      display: 'inline-block'
+    }
+  }), "network median ", NET_MEDIAN, /*#__PURE__*/React.createElement(InfoDot, {
+    text: MEDIAN_DEF
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, (() => {
+    const gutter = isMobile ? 104 : 124,
+      valcol = 40;
+    const lineStyle = (val, color) => ({
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 'calc(' + gutter + 'px + (100% - ' + (gutter + valcol) + 'px) * ' + val / max + ')',
+      borderLeft: '2px dashed ' + color,
+      zIndex: 3,
+      pointerEvents: 'none'
+    });
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      style: lineStyle(NET_MEDIAN, C.inkF)
+    }), /*#__PURE__*/React.createElement("div", {
+      style: lineStyle(T15_MEDIAN, C.warn)
+    }));
+  })(), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 4
+    }
+  }, sorted.map(n => {
+    const me = MEDIMA_TAG(n.c);
+    const young = YOUNG.includes(n.c);
+    const gutter = isMobile ? 104 : 124;
+    return /*#__PURE__*/React.createElement("div", {
+      key: n.c,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        background: me ? C.medimaSoft : 'transparent',
+        borderRadius: 8,
+        padding: me ? '4px 6px' : '0 6px',
+        margin: me ? '2px -6px' : 0,
+        position: 'relative',
+        zIndex: me ? 4 : 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: (isMobile ? 104 : 124) - 14,
+        flexShrink: 0,
+        fontSize: 11.5,
+        textAlign: 'right',
+        fontWeight: me ? 800 : 500,
+        color: me ? C.medima : young ? C.inkF : C.inkM,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
+    }, me && '◉ ', n.c, young && /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 9
+      }
+    }, " \xB7new")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: me ? 20 : 14,
+        background: C.lineS,
+        borderRadius: 6,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: n.v / max * 100 + '%',
+        height: '100%',
+        borderRadius: 6,
+        background: me ? 'linear-gradient(90deg,' + C.medima + ',' + C.secondary + ')' : young ? '#E6E1F0' : n.t === '1.5T' ? '#CFC8E0' : '#D9D2E8'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 32,
+        fontSize: 11.5,
+        fontWeight: me ? 800 : 600,
+        color: me ? C.medima : C.inkM,
+        textAlign: 'right'
+      }
+    }, n.v));
+  })))) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+      padding: '4px 2px'
+    }
+  }, BY_TYPE.map(b => {
+    const mx = Math.max(...BY_TYPE.map(x => x.avg));
+    return /*#__PURE__*/React.createElement("div", {
+      key: b.t,
+      style: {
+        background: b.isFuji ? C.medimaSoft : 'transparent',
+        borderRadius: 10,
+        padding: b.isFuji ? '10px 12px' : '0',
+        margin: b.isFuji ? '0 -12px' : 0
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 6,
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: b.isFuji ? C.medima : C.ink
+      }
+    }, b.t, " ", b.isFuji && /*#__PURE__*/React.createElement(MedimaBadge, null)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 800,
+        color: b.isFuji ? C.medima : C.inkM
+      }
+    }, b.avg, " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 500,
+        fontSize: 11,
+        color: C.inkF
+      }
+    }, "seg/day \xB7 ", b.n, " ", b.n === 1 ? 'center' : 'centers'))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: b.isFuji ? 24 : 20,
+        background: C.lineS,
+        borderRadius: 8,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: b.avg / mx * 100 + '%',
+        height: '100%',
+        borderRadius: 8,
+        background: b.isFuji ? 'linear-gradient(90deg,' + C.medima + ',' + C.secondary + ')' : '#CFC8E0'
+      }
+    })));
+  }), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 11.5,
+      color: C.inkM,
+      margin: '2px 0 0',
+      lineHeight: 1.5
+    }
+  }, "T\xE2rgu Mure\u0219 is the network\u2019s only Open 1.2T unit. Even so, its before-NHS throughput sits at roughly double the 1.5T class average \u2014 the field-strength gap is not visible in real-world volume."))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 16,
+    style: {
+      background: C.medimaSoft,
+      border: '1px solid ' + C.medima
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 40,
+      color: C.medima,
+      lineHeight: 1
+    }
+  }, "+104%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 4
+    }
+  }, "above the 1.5T median"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "10.9 vs a ", T15_MEDIAN, " seg/day median across 24 mature 1.5T centers. The honest peer comparison, and Tg Mure\u0219 still doubles it.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 16
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 30,
+      color: C.secondary,
+      lineHeight: 1
+    }
+  }, "94th"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink
+    }
+  }, "percentile")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "Ranked ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: C.medima
+    }
+  }, "2nd of 31"), " centers; only Virtu\u021Bii is marginally above. \u201CBefore NHS\u201D strips out reimbursed volume, so this is pure early demand.")))));
+}
+
+/* ════════════════════ PRODUCTIVITY vs SIBIU (diverging + radar-style) ════════════════════ */
+function SecProductivity({
+  isMobile
+}) {
+  const max = Math.max(...PROD.flatMap(p => [p.tm, p.sb]));
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Productivity vs. Sibiu \xB7 Private patients"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Productivity close to a mature center"), /*#__PURE__*/React.createElement(Sub, null, "Segments/day (Private average, like-for-like) \u2014 T\xE2rgu Mure\u0219 vs. Sibiu, by anatomical region."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.7fr) minmax(290px,1fr)',
+      gap: 16,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 14 : 20
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 18,
+      marginBottom: 16,
+      fontSize: 12,
+      fontWeight: 700
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      color: C.medima
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: C.medima,
+      display: 'inline-block'
+    }
+  }), "\u25C9 Tg Mure\u0219"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: '#CFC8E0',
+      display: 'inline-block'
+    }
+  }), "Sibiu")), PROD.map(p => {
+    const win = p.tm >= p.sb;
+    return /*#__PURE__*/React.createElement("div", {
+      key: p.r,
+      style: {
+        marginBottom: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: C.ink
+      }
+    }, p.r), win && /*#__PURE__*/React.createElement(Pill, {
+      tone: "accent"
+    }, "TM \u2265 Sibiu")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 4
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: 16,
+        background: C.lineS,
+        borderRadius: 5,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: p.tm / max * 100 + '%',
+        height: '100%',
+        background: 'linear-gradient(90deg,' + C.medima + ',' + C.secondary + ')',
+        borderRadius: 5
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 36,
+        fontSize: 12,
+        fontWeight: 800,
+        color: C.medima,
+        textAlign: 'right'
+      }
+    }, p.tm)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: 13,
+        background: C.lineS,
+        borderRadius: 5,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: p.sb / max * 100 + '%',
+        height: '100%',
+        background: '#CFC8E0',
+        borderRadius: 5
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 36,
+        fontSize: 12,
+        fontWeight: 700,
+        color: C.inkM,
+        textAlign: 'right'
+      }
+    }, p.sb)));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 16
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: '.08em',
+      textTransform: 'uppercase',
+      color: C.secondary,
+      marginBottom: 10
+    }
+  }, "Total segments/day"), /*#__PURE__*/React.createElement(Donut, {
+    tm: PROD_TOTAL.tm,
+    sb: PROD_TOTAL.sb
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.ok,
+      fontWeight: 800,
+      marginTop: 10,
+      textAlign: 'center'
+    }
+  }, "89% of Sibiu\u2019s level")), /*#__PURE__*/React.createElement(Card, {
+    pad: 16
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      lineHeight: 1.55
+    }
+  }, "Sibiu has 5 years of operation; Tg Mure\u0219 has 3 months. On ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: C.ink
+    }
+  }, "head & neck"), " and ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: C.ink
+    }
+  }, "abdomen"), ", Tg Mure\u0219 already exceeds Sibiu.")))));
+}
+/* gauge comparing TM total vs Sibiu total */
+function Donut({
+  tm,
+  sb
+}) {
+  const r = 52,
+    cx = 70,
+    cy = 70,
+    circ = 2 * Math.PI * r;
+  const ratio = tm / sb;
+  const tmArc = circ * Math.min(ratio, 1);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 14
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 140 140",
+    style: {
+      width: 120,
+      height: 120
+    }
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: r,
+    fill: "none",
+    stroke: C.lineS,
+    strokeWidth: "14"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: r,
+    fill: "none",
+    stroke: "url(#g1)",
+    strokeWidth: "14",
+    strokeLinecap: "round",
+    strokeDasharray: tmArc + ' ' + circ,
+    transform: 'rotate(-90 ' + cx + ' ' + cy + ')'
+  }), /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: "g1",
+    x1: "0",
+    y1: "0",
+    x2: "1",
+    y2: "1"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0",
+    stopColor: C.medima
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "1",
+    stopColor: C.accent
+  }))), /*#__PURE__*/React.createElement("text", {
+    x: cx,
+    y: cy - 2,
+    textAnchor: "middle",
+    fontFamily: "'Red Hat Display'",
+    fontWeight: "900",
+    fontSize: "26",
+    fill: C.medima
+  }, tm), /*#__PURE__*/React.createElement("text", {
+    x: cx,
+    y: cy + 16,
+    textAnchor: "middle",
+    fontSize: "9",
+    fill: C.inkM
+  }, "Tg Mure\u0219")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      lineHeight: 1.6
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: C.medima,
+      fontSize: 15
+    }
+  }, tm), " TM"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: C.inkM,
+      fontSize: 15
+    }
+  }, sb), " Sibiu")));
+}
+
+/* ════════════════════ SCAN-TIME EFFICIENCY (region + planned-vs-real scatter/table) ════════════════════ */
+function SecScantimes({
+  isMobile
+}) {
+  const [view, setView] = useState('region');
+  const [cat, setCat] = useState('All');
+  const cats = ['All', 'Spine', 'Head & neck', 'Limbs & extremities', 'Abdomen & pelvis'];
+  const max = Math.max(...SCAN_REGION.flatMap(s => [s.tm, s.sb]));
+  const det = cat === 'All' ? SCAN_DETAIL : SCAN_DETAIL.filter(d => d.cat === cat);
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Scan-time efficiency"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Scan times: T\xE2rgu Mure\u0219 vs. Sibiu"), /*#__PURE__*/React.createElement(Sub, null, "Open 1.2T vs. Sibiu\u2019s 3T. Lower field strength normally means longer sequences \u2014 coming within ~1 min overall and matching Sibiu on spine is a strong result."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'inline-flex',
+      padding: 3,
+      background: C.lineS,
+      borderRadius: 999
+    }
+  }, [{
+    id: 'region',
+    l: 'By region'
+  }, {
+    id: 'detail',
+    l: 'Actual vs. planned'
+  }].map(v => /*#__PURE__*/React.createElement("button", {
+    key: v.id,
+    onClick: () => setView(v.id),
+    style: {
+      padding: '7px 15px',
+      borderRadius: 999,
+      fontSize: 12.5,
+      fontWeight: 700,
+      cursor: 'pointer',
+      border: 'none',
+      background: view === v.id ? C.panel : 'transparent',
+      color: view === v.id ? C.medima : C.inkM,
+      boxShadow: view === v.id ? '0 1px 3px rgba(29,29,41,.10)' : 'none'
+    }
+  }, v.l))), view === 'detail' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 6,
+      flexWrap: 'wrap',
+      overflowX: isMobile ? 'auto' : 'visible'
+    }
+  }, cats.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c,
+    onClick: () => setCat(c),
+    style: {
+      padding: '6px 12px',
+      borderRadius: 999,
+      fontSize: 12,
+      fontWeight: 600,
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      border: '1px solid ' + (cat === c ? C.medima : C.line),
+      background: cat === c ? C.medima : C.panel,
+      color: cat === c ? '#fff' : C.inkM
+    }
+  }, c)))), view === 'region' ? /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 14 : 20
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 18,
+      marginBottom: 16,
+      fontSize: 12,
+      fontWeight: 700
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      color: C.medima
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: C.medima,
+      display: 'inline-block'
+    }
+  }), "\u25C9 Tg Mure\u0219"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: '#CFC8E0',
+      display: 'inline-block'
+    }
+  }), "Sibiu")), SCAN_REGION.map(s => {
+    const faster = s.tm <= s.sb;
+    return /*#__PURE__*/React.createElement("div", {
+      key: s.r,
+      style: {
+        marginBottom: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: C.ink
+      }
+    }, s.r), /*#__PURE__*/React.createElement(Pill, {
+      tone: faster ? 'accent' : 'warn'
+    }, faster ? '≤ Sibiu' : '+' + (s.tm - s.sb).toFixed(1) + ' min')), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 4
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: 16,
+        background: C.lineS,
+        borderRadius: 5,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: s.tm / max * 100 + '%',
+        height: '100%',
+        background: 'linear-gradient(90deg,' + C.medima + ',' + C.secondary + ')',
+        borderRadius: 5
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 58,
+        fontSize: 12,
+        fontWeight: 800,
+        color: C.medima,
+        whiteSpace: 'nowrap',
+        textAlign: 'right'
+      }
+    }, s.tm, " min")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: 13,
+        background: C.lineS,
+        borderRadius: 5,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: s.sb / max * 100 + '%',
+        height: '100%',
+        background: '#CFC8E0',
+        borderRadius: 5
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 58,
+        fontSize: 12,
+        fontWeight: 700,
+        color: C.inkM,
+        whiteSpace: 'nowrap',
+        textAlign: 'right'
+      }
+    }, s.sb, " min")));
+  })) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.9fr) minmax(300px,1fr)',
+      gap: 16,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 10 : 14
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      overflowX: 'auto'
+    }
+  }, /*#__PURE__*/React.createElement("table", {
+    style: {
+      width: '100%',
+      borderCollapse: 'collapse',
+      fontSize: 12.5,
+      minWidth: isMobile ? 460 : 0
+    }
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+    style: {
+      textAlign: 'left',
+      color: C.inkM,
+      fontSize: 11,
+      textTransform: 'uppercase',
+      letterSpacing: '.04em'
+    }
+  }, /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: '8px 10px',
+      fontWeight: 700
+    }
+  }, "Procedure"), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: '8px 10px',
+      fontWeight: 700,
+      textAlign: 'right'
+    }
+  }, "Planned"), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: '8px 10px',
+      fontWeight: 700,
+      textAlign: 'right',
+      color: C.medima
+    }
+  }, "TM actual"), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: '8px 10px',
+      fontWeight: 700,
+      textAlign: 'right'
+    }
+  }, "Sibiu"), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: '8px 10px',
+      fontWeight: 700,
+      textAlign: 'right'
+    }
+  }, "vs plan"))), /*#__PURE__*/React.createElement("tbody", null, det.map((d, i) => {
+    const sav = d.pl - d.tm;
+    return /*#__PURE__*/React.createElement("tr", {
+      key: i,
+      style: {
+        borderTop: '1px solid ' + C.lineS
+      }
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: '9px 10px',
+        color: C.ink,
+        fontWeight: 500
+      }
+    }, d.p), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: '9px 10px',
+        textAlign: 'right',
+        color: C.inkM
+      }
+    }, d.pl), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: '9px 10px',
+        textAlign: 'right',
+        fontWeight: 800,
+        color: C.medima,
+        background: C.medimaSoft
+      }
+    }, d.tm), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: '9px 10px',
+        textAlign: 'right',
+        color: C.inkM
+      }
+    }, d.sb), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: '9px 10px',
+        textAlign: 'right',
+        fontWeight: 700,
+        color: sav >= 0 ? C.ok : C.bad
+      }
+    }, sav >= 0 ? '-' : '+', Math.abs(sav).toFixed(1)));
+  }))))), /*#__PURE__*/React.createElement(Card, {
+    pad: 16,
+    style: {
+      background: C.okSoft,
+      border: '1px solid ' + C.accent
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 42,
+      color: C.ok,
+      lineHeight: 1
+    }
+  }, "-25%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 4
+    }
+  }, "faster than planned"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 8,
+      lineHeight: 1.55
+    }
+  }, "Across 53 procedure types, actual times run systematically below plan (planned 2,225 min \u2192 actual 1,674 min), unlocking slots/day."))));
+}
+
+/* ════════════════════ REFERRALS ════════════════════ */
+function SecReferrals({
+  isMobile
+}) {
+  const max = Math.max(...REFERRALS.map(r => r.n));
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Demand sources"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Referrals by specialty: neurology drives demand"), /*#__PURE__*/React.createElement(Sub, null, "Top 8 referring specialties (of ", REF_TOTAL, " valid referrals across ", REF_SPEC, " specialties)."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.7fr) minmax(290px,1fr)',
+      gap: 16,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 14 : 20
+  }, REFERRALS.map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.s,
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 5
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: r.self ? C.secondary : C.ink
+    }
+  }, r.s, r.self && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontWeight: 600,
+      color: C.inkM
+    }
+  }, " \xB7 no referral")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 700,
+      color: C.inkM
+    }
+  }, r.n, " ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 500,
+      color: C.inkF
+    }
+  }, "\xB7 ", r.pct, "%"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 16,
+      background: C.lineS,
+      borderRadius: 6,
+      overflow: 'hidden'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: r.n / max * 100 + '%',
+      height: '100%',
+      borderRadius: 6,
+      background: r.self ? 'repeating-linear-gradient(45deg,' + C.secondary + ',' + C.secondary + '6px,' + C.medima + '6px,' + C.medima + '12px)' : 'linear-gradient(90deg,' + C.medima + ',' + C.secondary + ')'
+    }
+  }))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 16,
+    style: {
+      background: C.medimaSoft,
+      border: '1px solid ' + C.medima
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 38,
+      color: C.medima,
+      lineHeight: 1
+    }
+  }, "27%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 4
+    }
+  }, "Neurology"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "Largest referral source, in line with the dominance of spine and head & neck exams.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 16
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 38,
+      color: C.secondary,
+      lineHeight: 1
+    }
+  }, "19%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 4
+    }
+  }, "Patient self-referral"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "Nearly 1 in 5 exams come directly from patients \u2014 solid private demand with no medical referral.")))));
+}
+
+/* ════════════════════ IMAGE QUALITY ════════════════════ */
+function SecQuality({
+  isMobile
+}) {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Diagnostic performance"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Image quality"), /*#__PURE__*/React.createElement(Sub, null, "Radiology team verdict: satisfied with the overall image quality obtained on the Open 1.2T MRI system."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: 12
+    }
+  }, QUALITY.map((q, i) => /*#__PURE__*/React.createElement(Card, {
+    key: i,
+    pad: 16,
+    style: {
+      display: 'flex',
+      gap: 12,
+      alignItems: 'flex-start'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 30,
+      height: 30,
+      borderRadius: 9,
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 15,
+      fontWeight: 800,
+      background: q.t === 'ok' ? C.okSoft : C.warnSoft,
+      color: q.t === 'ok' ? C.ok : C.warn
+    }
+  }, q.t === 'ok' ? '✓' : '!'), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginBottom: 3
+    }
+  }, q.k), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      lineHeight: 1.5
+    }
+  }, q.v))))));
+}
+
+/* ════════════════════ FEEDBACK ════════════════════ */
+function SecFeedback({
+  isMobile
+}) {
+  const rated = REFERRALS.filter(r => r.stars);
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Voice of the referrer"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "Referring-physician feedback"), /*#__PURE__*/React.createElement(Sub, null, "Service rating by top referring specialties (out of 5 stars) \u2014 patient self-referral excluded."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: 12
+    }
+  }, rated.slice(0, 2).map((r, i) => /*#__PURE__*/React.createElement(Card, {
+    key: i,
+    pad: 18,
+    style: {
+      borderColor: C.medima,
+      background: C.panel2
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 16,
+      fontWeight: 800,
+      color: C.medima,
+      fontFamily: "'Red Hat Display',sans-serif"
+    }
+  }, r.s), /*#__PURE__*/React.createElement(Stars, {
+    n: r.stars
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      marginTop: 8
+    }
+  }, r.n, " referrals \xB7 ", r.pct, "% of volume"), r.note && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.ink,
+      marginTop: 8,
+      fontWeight: 600
+    }
+  }, r.note)))), /*#__PURE__*/React.createElement(Card, {
+    pad: 16,
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      color: C.inkM,
+      marginBottom: 12,
+      textTransform: 'uppercase',
+      letterSpacing: '.05em'
+    }
+  }, "Other rated specialties"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+      gap: 10
+    }
+  }, rated.slice(2).map((r, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '8px 12px',
+      background: C.panel2,
+      borderRadius: 10,
+      border: '1px solid ' + C.lineS
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 600,
+      color: C.ink
+    }
+  }, r.s), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: C.inkM
+    }
+  }, r.n), /*#__PURE__*/React.createElement(Stars, {
+    n: r.stars
+  })))))));
+}
+
+/* ════════════════════ CONCLUSIONS ════════════════════ */
+function SecConclusions({
+  isMobile
+}) {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Bottom line & levers ahead"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "A center that performs \u2014 with clear room to grow"), /*#__PURE__*/React.createElement(Sub, null, "Data: ", META.period, " \xB7 ", META.exams, " examinations \xB7 internal Sibiu benchmark (Private LFL)."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: 16
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 18,
+    style: {
+      background: C.medimaSoft,
+      border: '1px solid ' + C.medima
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 26,
+      height: 26,
+      borderRadius: 8,
+      background: C.medima,
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 800,
+      fontSize: 14
+    }
+  }, "\u2713"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 15,
+      fontWeight: 800,
+      color: C.medima,
+      fontFamily: "'Red Hat Display',sans-serif"
+    }
+  }, "What works")), WINS.map((w, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      marginBottom: i < WINS.length - 1 ? 12 : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: C.ink
+    }
+  }, w.h), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      marginTop: 2,
+      lineHeight: 1.5
+    }
+  }, w.d)))), /*#__PURE__*/React.createElement(Card, {
+    pad: 18,
+    style: {
+      background: C.accentSoft,
+      border: '1px solid ' + C.accent
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 26,
+      height: 26,
+      borderRadius: 8,
+      background: C.ok,
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 800,
+      fontSize: 15
+    }
+  }, "\u2197"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 15,
+      fontWeight: 800,
+      color: C.ok,
+      fontFamily: "'Red Hat Display',sans-serif"
+    }
+  }, "Where we grow")), GROW.map((w, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      marginBottom: i < GROW.length - 1 ? 12 : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: C.ink
+    }
+  }, w.h), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      marginTop: 2,
+      lineHeight: 1.5
+    }
+  }, w.d))))));
+}
+
+/* ════════════════════ VOLUME TRAJECTORY ════════════════════ */
+function SecTrajectory({
+  isMobile
+}) {
+  const max = Math.max(...MONTHLY.map(m => m.total));
+  const W = isMobile ? 340 : 620,
+    Hgt = isMobile ? 240 : 320,
+    padL = 40,
+    padB = 46,
+    padT = 34,
+    padR = 20;
+  const innerW = W - padL - padR,
+    innerH = Hgt - padT - padB;
+  const x = i => padL + (MONTHLY.length === 1 ? 0 : i / (MONTHLY.length - 1)) * innerW;
+  const y = v => padT + innerH - v / max * innerH;
+  const linePts = MONTHLY.map((m, i) => x(i) + ',' + y(m.total)).join(' ');
+  const areaPts = 'M' + padL + ',' + (padT + innerH) + ' L' + MONTHLY.map((m, i) => x(i) + ',' + y(m.total)).join(' L') + ' L' + (padL + innerW) + ',' + (padT + innerH) + ' Z';
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Volume trajectory \xB7 monthly"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "From soft launch to the NHS pivot"), /*#__PURE__*/React.createElement(Sub, null, "Monthly examinations across the first 3 months \u2014 the ramp curve over time, and the moment the NHS contract goes live in June. Note: both March and June are part-months (data starts 16 March and ends 16 June), so they reflect roughly two weeks each."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.85fr) minmax(300px,1fr)',
+      gap: 20,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 16 : 26
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 22,
+      marginBottom: 18,
+      fontSize: 12,
+      fontWeight: 700
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      color: C.medima
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: C.medima,
+      display: 'inline-block'
+    }
+  }), "Private"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      color: C.ok
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: C.accent,
+      display: 'inline-block'
+    }
+  }), "NHS (CAS)"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      color: C.inkM
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 14,
+      borderTop: '2px solid ' + C.secondary,
+      display: 'inline-block'
+    }
+  }), "Total/month")), /*#__PURE__*/React.createElement("svg", {
+    viewBox: '0 0 ' + W + ' ' + Hgt,
+    style: {
+      width: '100%',
+      height: 'auto',
+      overflow: 'visible'
+    }
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: "ar",
+    x1: "0",
+    y1: "0",
+    x2: "0",
+    y2: "1"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0",
+    stopColor: C.secondary,
+    stopOpacity: ".16"
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "1",
+    stopColor: C.secondary,
+    stopOpacity: "0"
+  }))), [0, 0.25, 0.5, 0.75, 1].map((g, i) => /*#__PURE__*/React.createElement("g", {
+    key: i
+  }, /*#__PURE__*/React.createElement("line", {
+    x1: padL,
+    y1: padT + innerH - g * innerH,
+    x2: padL + innerW,
+    y2: padT + innerH - g * innerH,
+    stroke: C.lineS,
+    strokeWidth: "1"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: padL - 8,
+    y: padT + innerH - g * innerH + 3,
+    textAnchor: "end",
+    fontSize: "9.5",
+    fill: C.inkF
+  }, Math.round(g * max)))), MONTHLY.map((m, i) => {
+    const bw = isMobile ? 34 : 54;
+    const bx = x(i) - bw / 2;
+    const pH = m.priv / max * innerH,
+      cH = m.cas / max * innerH;
+    return /*#__PURE__*/React.createElement("g", {
+      key: m.m
+    }, /*#__PURE__*/React.createElement("rect", {
+      x: bx,
+      y: padT + innerH - pH,
+      width: bw,
+      height: pH,
+      rx: "5",
+      fill: C.medima,
+      opacity: ".92"
+    }), m.cas > 0 && /*#__PURE__*/React.createElement("rect", {
+      x: bx,
+      y: padT + innerH - pH - cH,
+      width: bw,
+      height: cH,
+      rx: "5",
+      fill: C.accent
+    }), /*#__PURE__*/React.createElement("text", {
+      x: x(i),
+      y: padT + innerH - pH - cH - 10,
+      textAnchor: "middle",
+      fontSize: "12.5",
+      fontWeight: "800",
+      fill: C.ink
+    }, m.total), /*#__PURE__*/React.createElement("text", {
+      x: x(i),
+      y: padT + innerH + 22,
+      textAnchor: "middle",
+      fontSize: "12",
+      fontWeight: "700",
+      fill: C.inkM
+    }, m.m), (i === 0 || i === 3) && /*#__PURE__*/React.createElement("text", {
+      x: x(i),
+      y: padT + innerH + 36,
+      textAnchor: "middle",
+      fontSize: "9",
+      fill: C.inkF
+    }, "part-month"));
+  }), /*#__PURE__*/React.createElement("path", {
+    d: areaPts,
+    fill: "url(#ar)"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: linePts,
+    fill: "none",
+    stroke: C.secondary,
+    strokeWidth: "2.5",
+    strokeLinejoin: "round"
+  }), MONTHLY.map((m, i) => /*#__PURE__*/React.createElement("circle", {
+    key: i,
+    cx: x(i),
+    cy: y(m.total),
+    r: "4",
+    fill: "#fff",
+    stroke: C.secondary,
+    strokeWidth: "2.5"
+  })), /*#__PURE__*/React.createElement("line", {
+    x1: x(3),
+    y1: padT - 10,
+    x2: x(3),
+    y2: padT + innerH,
+    stroke: C.ok,
+    strokeWidth: "1.5",
+    strokeDasharray: "3 3"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: x(3),
+    y: padT - 15,
+    textAnchor: "middle",
+    fontSize: "10",
+    fontWeight: "700",
+    fill: C.ok
+  }, "NHS live"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 20,
+    style: {
+      background: C.medimaSoft,
+      border: '1px solid ' + C.medima
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 38,
+      color: C.medima,
+      lineHeight: 1
+    }
+  }, "2.2\xD7"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 6
+    }
+  }, "volume growth in 2 months"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      marginTop: 8,
+      lineHeight: 1.55
+    }
+  }, "From 82 exams in the half-month launch to 179 at the Private peak in May \u2014 a steep, sustained ramp.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 20,
+    style: {
+      background: C.accentSoft,
+      border: '1px solid ' + C.accent
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 38,
+      color: C.ok,
+      lineHeight: 1
+    }
+  }, "124"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 6
+    }
+  }, "NHS exams in the first ~2 weeks"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: C.inkM,
+      marginTop: 8,
+      lineHeight: 1.55
+    }
+  }, "The NHS contract went live mid-June, so this is roughly two weeks of activity, not a full month. Reimbursed volume now sits on top of the private base, opening a second growth lever.")))));
+}
+
+/* ════════════════════ CASE MIX ════════════════════ */
+function SecCaseload({
+  isMobile
+}) {
+  const max = Math.max(...TOP_PROC.map(p => p.n));
+  const regForChart = REG_TOTALS.filter(r => r.r !== 'Consults / control');
+  // donut geometry
+  const total576 = 576;
+  let acc = 0;
+  const segs = REG_TOTALS.map(r => {
+    const start = acc / total576;
+    acc += r.n;
+    const end = acc / total576;
+    return {
+      ...r,
+      start,
+      end
+    };
+  });
+  const R = 64,
+    CX = 80,
+    CY = 80,
+    SW = 26,
+    CIRC = 2 * Math.PI * R;
+  const segColor = r => REG_COLOR[r] || '#D9D2E8';
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Case mix \xB7 what the unit scans"), /*#__PURE__*/React.createElement(H, {
+    size: isMobile ? 22 : 26
+  }, "A spine and neuro core, with broad coverage"), /*#__PURE__*/React.createElement(Sub, null, "The clinical profile of the Open 1.2T across all ", total576, " examinations \u2014 the anatomical split (Andreea\u2019s grouping) and the ten most frequent individual exams."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(320px,1fr) minmax(0,1.5fr)',
+      gap: 18,
+      alignItems: 'stretch'
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 16 : 22
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: '.08em',
+      textTransform: 'uppercase',
+      color: C.secondary,
+      marginBottom: 14
+    }
+  }, "Exams by region \xB7 all ", total576), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 20,
+      flexWrap: isMobile ? 'wrap' : 'nowrap'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 160 160",
+    style: {
+      width: 150,
+      height: 150,
+      flexShrink: 0
+    }
+  }, segs.map((s, i) => {
+    const dash = (s.end - s.start) * CIRC;
+    const gap = CIRC - dash;
+    const offset = -s.start * CIRC;
+    return /*#__PURE__*/React.createElement("circle", {
+      key: i,
+      cx: CX,
+      cy: CY,
+      r: R,
+      fill: "none",
+      stroke: segColor(s.r),
+      strokeWidth: SW,
+      strokeDasharray: dash + ' ' + gap,
+      strokeDashoffset: offset,
+      transform: 'rotate(-90 ' + CX + ' ' + CY + ')'
+    });
+  }), /*#__PURE__*/React.createElement("text", {
+    x: CX,
+    y: CY - 4,
+    textAnchor: "middle",
+    fontFamily: "'Red Hat Display'",
+    fontWeight: "900",
+    fontSize: "26",
+    fill: C.ink
+  }, total576), /*#__PURE__*/React.createElement("text", {
+    x: CX,
+    y: CY + 15,
+    textAnchor: "middle",
+    fontSize: "10",
+    fill: C.inkM
+  }, "examinations")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 150
+    }
+  }, REG_TOTALS.map((r, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 9
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 11,
+      height: 11,
+      borderRadius: 3,
+      background: segColor(r.r),
+      display: 'inline-block',
+      flexShrink: 0
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 600,
+      color: C.ink,
+      flex: 1
+    }
+  }, r.r), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 800,
+      color: C.inkM
+    }
+  }, r.pct, "%"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: C.inkF,
+      width: 30,
+      textAlign: 'right'
+    }
+  }, r.n)))))), /*#__PURE__*/React.createElement(Card, {
+    pad: isMobile ? 16 : 22
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: '.08em',
+      textTransform: 'uppercase',
+      color: C.secondary,
+      marginBottom: 14
+    }
+  }, "Top 10 individual exams"), TOP_PROC.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.p,
+    style: {
+      marginBottom: 11
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 600,
+      color: C.ink
+    }
+  }, p.p), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 800,
+      color: C.inkM
+    }
+  }, p.n)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 12,
+      background: C.lineS,
+      borderRadius: 5,
+      overflow: 'hidden'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: p.n / max * 100 + '%',
+      height: '100%',
+      borderRadius: 5,
+      background: REG_COLOR[p.reg]
+    }
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 14,
+      flexWrap: 'wrap',
+      marginTop: 10,
+      fontSize: 11,
+      fontWeight: 600
+    }
+  }, regForChart.map(r => /*#__PURE__*/React.createElement("span", {
+    key: r.r,
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+      color: C.inkM
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: 10,
+      height: 10,
+      borderRadius: 3,
+      background: REG_COLOR[r.r],
+      display: 'inline-block'
+    }
+  }), r.r))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+      gap: 14,
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement(Card, {
+    pad: 18,
+    style: {
+      background: C.medimaSoft,
+      border: '1px solid ' + C.medima
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 30,
+      color: C.medima,
+      lineHeight: 1
+    }
+  }, "37%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 6
+    }
+  }, "spine examinations"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "The single largest region, in line with neurology and orthopaedics being the top referrers.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 18
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 30,
+      color: C.secondary,
+      lineHeight: 1
+    }
+  }, "56%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 6
+    }
+  }, "spine + head & neck"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "Neuro-axis demand dominates \u2014 exactly the routine profile an Open 1.2T handles well.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 18
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 900,
+      fontSize: 30,
+      color: C.ok,
+      lineHeight: 1
+    }
+  }, "4"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: C.ink,
+      marginTop: 6
+    }
+  }, "balanced regions"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: C.inkM,
+      marginTop: 6,
+      lineHeight: 1.5
+    }
+  }, "No single dependency: abdomen & pelvis (21%) and limbs (20%) each add a fifth of volume, supporting the image-quality verdict."))));
+}
+
+/* ════════════════════ APP SHELL ════════════════════ */
+function App() {
+  const [active, setActive] = useState('cover');
+  const [mode, setMode] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 760 ? 'mobile' : 'desktop');
+  const [navOpen, setNavOpen] = useState(false);
+  const isMobile = mode === 'mobile';
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [active]);
+  const go = id => {
+    setActive(id);
+    setNavOpen(false);
+  };
+  const navItems = SECTIONS.filter(s => !s.hidden);
+  const cur = SECTIONS.find(s => s.id === active);
+  const isCover = active === 'cover';
+  const render = () => {
+    const p = {
+      isMobile,
+      go
+    };
+    switch (active) {
+      case 'cover':
+        return /*#__PURE__*/React.createElement(Cover, p);
+      case 'summary':
+        return /*#__PURE__*/React.createElement(SecSummary, p);
+      case 'rampup':
+        return /*#__PURE__*/React.createElement(SecRampup, p);
+      case 'trajectory':
+        return /*#__PURE__*/React.createElement(SecTrajectory, p);
+      case 'productivity':
+        return /*#__PURE__*/React.createElement(SecProductivity, p);
+      case 'scantimes':
+        return /*#__PURE__*/React.createElement(SecScantimes, p);
+      case 'caseload':
+        return /*#__PURE__*/React.createElement(SecCaseload, p);
+      case 'referrals':
+        return /*#__PURE__*/React.createElement(SecReferrals, p);
+      case 'quality':
+        return /*#__PURE__*/React.createElement(SecQuality, p);
+      case 'feedback':
+        return /*#__PURE__*/React.createElement(SecFeedback, p);
+      case 'conclusions':
+        return /*#__PURE__*/React.createElement(SecConclusions, p);
+      default:
+        return null;
+    }
+  };
+
+  /* ───────── MOBILE ───────── */
+  if (isMobile) {
+    const frame = {
+      maxWidth: 420,
+      margin: '18px auto',
+      borderRadius: 30,
+      boxShadow: '0 24px 60px rgba(29,29,41,.22)',
+      border: '1px solid ' + C.line,
+      overflow: 'hidden',
+      background: C.bg,
+      height: 'min(860px, calc(100vh - 36px))',
+      display: 'flex',
+      flexDirection: 'column'
+    };
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        minHeight: '100vh',
+        background: 'linear-gradient(160deg,#EDE8F7,#F7F6FB 40%)'
+      }
+    }, /*#__PURE__*/React.createElement(ModeToggle, {
+      mode: mode,
+      setMode: setMode
+    }), /*#__PURE__*/React.createElement("div", {
+      style: frame
+    }, !isCover && /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: '16px 16px 12px',
+        background: 'linear-gradient(135deg,' + C.medima + ',' + C.secondary + ')',
+        color: '#fff',
+        flexShrink: 0
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: '.12em',
+        opacity: .85,
+        textTransform: 'uppercase'
+      }
+    }, "Medima Health \xB7 Board"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'Red Hat Display',sans-serif",
+        fontWeight: 800,
+        fontSize: 17,
+        marginTop: 2
+      }
+    }, "Open MRI Fuji \xB7 Tg Mure\u0219")), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setNavOpen(o => !o),
+      style: {
+        width: 38,
+        height: 38,
+        borderRadius: 11,
+        border: 'none',
+        background: 'rgba(255,255,255,.18)',
+        color: '#fff',
+        fontSize: 18,
+        cursor: 'pointer'
+      }
+    }, navOpen ? '✕' : '☰')), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        background: 'rgba(255,255,255,.2)',
+        borderRadius: 8,
+        padding: '3px 8px',
+        fontSize: 11,
+        fontWeight: 700
+      }
+    }, cur.n), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700
+      }
+    }, cur.label))), navOpen && /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: 'absolute',
+        inset: 0,
+        zIndex: 30
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      onClick: () => setNavOpen(false),
+      style: {
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(29,29,41,.4)'
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        width: '78%',
+        background: C.panel,
+        boxShadow: '-12px 0 40px rgba(0,0,0,.2)',
+        padding: '18px 14px',
+        overflowY: 'auto'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        color: C.inkM,
+        textTransform: 'uppercase',
+        letterSpacing: '.1em',
+        marginBottom: 12
+      }
+    }, "Contents"), navItems.map(s => /*#__PURE__*/React.createElement("button", {
+      key: s.id,
+      onClick: () => go(s.id),
+      style: {
+        display: 'block',
+        width: '100%',
+        textAlign: 'left',
+        padding: '11px 12px',
+        borderRadius: 11,
+        marginBottom: 6,
+        cursor: 'pointer',
+        border: '1px solid ' + (active === s.id ? C.medima : 'transparent'),
+        background: active === s.id ? C.medimaSoft : 'transparent'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        color: C.secondary
+      }
+    }, s.n), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13.5,
+        fontWeight: 700,
+        color: active === s.id ? C.medima : C.ink
+      }
+    }, s.label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: C.inkM
+      }
+    }, s.sub))))), /*#__PURE__*/React.createElement("div", {
+      ref: scrollRef,
+      style: {
+        flex: 1,
+        overflowY: 'auto',
+        padding: isCover ? 0 : '16px 14px',
+        WebkitOverflowScrolling: 'touch'
+      }
+    }, render()), !isCover && /*#__PURE__*/React.createElement(MobileNavBar, {
+      active: active,
+      go: go,
+      items: navItems
+    })));
+  }
+
+  /* ───────── DESKTOP ───────── */
+  /* Cover is full-bleed (no sidebar) for impact; rest uses sidebar layout */
+  if (isCover) {
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        minHeight: '100vh',
+        padding: '24px',
+        background: C.bg
+      }
+    }, /*#__PURE__*/React.createElement(ModeToggle, {
+      mode: mode,
+      setMode: setMode
+    }), render());
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: '100vh',
+      background: C.bg
+    }
+  }, /*#__PURE__*/React.createElement(ModeToggle, {
+    mode: mode,
+    setMode: setMode
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex'
+    }
+  }, /*#__PURE__*/React.createElement("aside", {
+    style: {
+      width: 248,
+      flexShrink: 0,
+      background: C.panel,
+      borderRight: '1px solid ' + C.line,
+      padding: '24px 16px',
+      position: 'sticky',
+      top: 0,
+      height: '100vh',
+      overflowY: 'auto',
+      zIndex: 5
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => go('cover'),
+    style: {
+      display: 'block',
+      textAlign: 'left',
+      border: 'none',
+      background: 'transparent',
+      cursor: 'pointer',
+      padding: '0 8px 18px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      fontWeight: 700,
+      letterSpacing: '.14em',
+      color: C.secondary,
+      textTransform: 'uppercase'
+    }
+  }, "Medima Health"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Red Hat Display',sans-serif",
+      fontWeight: 800,
+      fontSize: 17,
+      color: C.ink,
+      marginTop: 3,
+      lineHeight: 1.2
+    }
+  }, "Open MRI Fuji", /*#__PURE__*/React.createElement("br", null), "T\xE2rgu Mure\u0219"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: C.inkM,
+      marginTop: 6
+    }
+  }, "Board analysis \xB7 ", META.period)), navItems.map(s => {
+    const on = active === s.id;
+    return /*#__PURE__*/React.createElement("button", {
+      key: s.id,
+      onClick: () => go(s.id),
+      style: {
+        display: 'flex',
+        gap: 11,
+        width: '100%',
+        textAlign: 'left',
+        alignItems: 'center',
+        padding: '10px',
+        borderRadius: 11,
+        marginBottom: 3,
+        cursor: 'pointer',
+        border: 'none',
+        background: on ? C.medimaSoft : 'transparent'
+      },
+      onMouseEnter: e => {
+        if (!on) e.currentTarget.style.background = C.panel2;
+      },
+      onMouseLeave: e => {
+        if (!on) e.currentTarget.style.background = 'transparent';
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 26,
+        height: 26,
+        flexShrink: 0,
+        borderRadius: 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 11,
+        fontWeight: 800,
+        background: on ? C.medima : C.lineS,
+        color: on ? '#fff' : C.inkM
+      }
+    }, s.n), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: on ? C.medima : C.ink,
+        lineHeight: 1.2
+      }
+    }, s.label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: C.inkM,
+        marginTop: 1
+      }
+    }, s.sub)));
+  })), /*#__PURE__*/React.createElement("main", {
+    ref: scrollRef,
+    style: {
+      flex: 1,
+      padding: '34px 48px 40px',
+      overflowY: 'auto',
+      maxHeight: '100vh',
+      background: C.bg
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 1320,
+      width: '100%',
+      margin: '0 auto',
+      minHeight: 'calc(100vh - 74px)',
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, render()), /*#__PURE__*/React.createElement(DesktopNavBar, {
+    active: active,
+    go: go,
+    items: navItems
+  })))));
+}
+function idxOf(items, id) {
+  return items.findIndex(s => s.id === id);
+}
+function DesktopNavBar({
+  active,
+  go,
+  items
+}) {
+  const i = idxOf(items, active);
+  const prev = items[i - 1],
+    next = items[i + 1];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: 30,
+      paddingTop: 20,
+      borderTop: '1px solid ' + C.line
+    }
+  }, prev ? /*#__PURE__*/React.createElement("button", {
+    onClick: () => go(prev.id),
+    style: navBtn(false)
+  }, "\u2190 ", prev.label) : /*#__PURE__*/React.createElement("span", null), next ? /*#__PURE__*/React.createElement("button", {
+    onClick: () => go(next.id),
+    style: navBtn(true)
+  }, next.label, " \u2192") : /*#__PURE__*/React.createElement("span", null));
+}
+function MobileNavBar({
+  active,
+  go,
+  items
+}) {
+  const i = idxOf(items, active);
+  const prev = items[i - 1],
+    next = items[i + 1];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      flexShrink: 0,
+      display: 'flex',
+      gap: 8,
+      padding: '10px 12px',
+      borderTop: '1px solid ' + C.line,
+      background: C.panel
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    disabled: !prev,
+    onClick: () => prev && go(prev.id),
+    style: {
+      flex: 1,
+      padding: '11px',
+      borderRadius: 11,
+      border: '1px solid ' + C.line,
+      background: C.panel,
+      color: prev ? C.medima : C.inkF,
+      fontWeight: 700,
+      fontSize: 13,
+      cursor: prev ? 'pointer' : 'default'
+    }
+  }, "\u2190 Back"), /*#__PURE__*/React.createElement("button", {
+    disabled: !next,
+    onClick: () => next && go(next.id),
+    style: {
+      flex: 1,
+      padding: '11px',
+      borderRadius: 11,
+      border: 'none',
+      background: next ? C.medima : C.line,
+      color: '#fff',
+      fontWeight: 700,
+      fontSize: 13,
+      cursor: next ? 'pointer' : 'default'
+    }
+  }, "Next \u2192"));
+}
+function navBtn(primary) {
+  return {
+    padding: '10px 18px',
+    borderRadius: 11,
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: 'pointer',
+    border: primary ? 'none' : '1px solid ' + C.line,
+    background: primary ? C.medima : C.panel,
+    color: primary ? '#fff' : C.inkM
+  };
+}
+function ModeToggle({
+  mode,
+  setMode
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      top: 14,
+      right: 14,
+      zIndex: 50,
+      display: 'inline-flex',
+      padding: 3,
+      background: C.panel,
+      borderRadius: 999,
+      boxShadow: '0 4px 16px rgba(29,29,41,.14)',
+      border: '1px solid ' + C.line
+    }
+  }, [{
+    id: 'desktop',
+    l: 'Desktop'
+  }, {
+    id: 'mobile',
+    l: 'Mobile'
+  }].map(m => /*#__PURE__*/React.createElement("button", {
+    key: m.id,
+    onClick: () => setMode(m.id),
+    style: {
+      padding: '7px 15px',
+      borderRadius: 999,
+      fontSize: 12,
+      fontWeight: 700,
+      cursor: 'pointer',
+      border: 'none',
+      background: mode === m.id ? C.medima : 'transparent',
+      color: mode === m.id ? '#fff' : C.inkM
+    }
+  }, m.l)));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
+  } catch(e){ console.error(e); document.getElementById('fallback').style.display='block'; }
+}
+if(document.readyState==='complete') __mount(); else window.addEventListener('load', __mount);
+</script>
+</body></html>
