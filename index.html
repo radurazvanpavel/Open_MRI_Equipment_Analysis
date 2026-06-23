@@ -2433,12 +2433,12 @@ function SecScantimes({
     k: 'cal',
     label: 'Călărași',
     sub: '1.5T · no AI',
-    color: '#C9A23A'
+    color: '#A78BE8'
   }, {
     k: 'alba',
     label: 'Alba Iulia',
     sub: '1.5T · with AI',
-    color: C.accent
+    color: '#CBB8F0'
   }];
   const max = Math.max(...SCAN_REGION.flatMap(s => [s.tm, s.sb, s.cal, s.alba].filter(v => v != null)));
   const fmtDiff = (c, ref) => c == null || ref == null ? null : c - ref;
@@ -2612,7 +2612,7 @@ function SecScantimes({
         fontWeight: 700,
         textAlign: 'right',
         whiteSpace: 'nowrap',
-        color: ser.solid ? C.inkF : pct <= 0 ? C.ok : C.bad
+        color: ser.solid ? C.inkF : pct <= 0 ? C.medima : C.inkM
       }
     }, ser.solid ? 'reference' : (pct > 0 ? '+' : '') + pct.toFixed(0) + '% TM'));
   })))) : /*#__PURE__*/React.createElement("div", {
@@ -2661,8 +2661,8 @@ function SecScantimes({
   }, {
     k: 'alba',
     l: 'Alba 1.5T+AI',
-    c: C.ok,
-    bg: C.okSoft
+    c: C.secondary,
+    bg: C.medimaSoft
   }].map(col => /*#__PURE__*/React.createElement("span", {
     key: col.k,
     style: {
@@ -2802,7 +2802,7 @@ function SecScantimes({
           padding: '8px',
           textAlign: 'right',
           fontWeight: 700,
-          color: v <= 0 ? C.ok : C.bad,
+          color: v <= 0 ? C.medima : C.inkM,
           whiteSpace: 'nowrap'
         }
       }, v <= 0 ? '' : '+', v.toFixed(1), " ", /*#__PURE__*/React.createElement("span", {
@@ -2896,8 +2896,8 @@ function SecCapacity({
   }, "For each peer we keep only the procedures where both Tg Mure\u0219 and that peer have a measured time, then take the median of their time ratio as the relative scan speed. Multiplying the peer\u2019s known throughput by it gives the segments/day Tg Mure\u0219 could reach. No case mix, no anatomical grouping."), CAP2.peers.map(p => {
     const cols = {
       sb: '#7D5DE7',
-      cal: '#C9A23A',
-      alba: C.accent
+      cal: '#A78BE8',
+      alba: '#CBB8F0'
     };
     const slower = (1 / p.ratio - 1) * 100;
     return /*#__PURE__*/React.createElement("div", {
@@ -3068,8 +3068,8 @@ function SecCapacity({
   }, "Shorter protocols: \u22127 min Spine, \u22125 min Limbs & extremities, \u22123 min Head & neck (case-mix weighted).")), /*#__PURE__*/React.createElement(Card, {
     pad: 14,
     style: {
-      background: C.accentSoft,
-      border: '1px solid ' + C.accent,
+      background: C.medimaSoft,
+      border: '1px solid ' + C.secondary,
       gridColumn: isMobile ? 'auto' : 'auto'
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -3078,7 +3078,7 @@ function SecCapacity({
       fontWeight: 700,
       letterSpacing: '.05em',
       textTransform: 'uppercase',
-      color: C.ok,
+      color: C.secondary,
       marginBottom: 6
     }
   }, "With AI"), /*#__PURE__*/React.createElement("div", {
@@ -3092,14 +3092,14 @@ function SecCapacity({
       fontFamily: "'Red Hat Display',sans-serif",
       fontWeight: 900,
       fontSize: 34,
-      color: C.ok,
+      color: C.secondary,
       lineHeight: 1
     }
   }, "~", CAP_OPT.kpiAI.toFixed(0)), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11,
       fontWeight: 800,
-      color: C.ok
+      color: C.secondary
     }
   }, "+", (CAP_OPT.kpiAI - CAP_OPT.kpiOpt).toFixed(0))), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3223,19 +3223,20 @@ const MRI_DENSITY = [{
   per: '171,233'
 }];
 const MRI_MURES = {
-  c: 'Mureș County',
-  v: 21.2,
-  per: '47,108',
+  c: 'Tg Mureș city',
+  v: 97.7,
+  per: '10,235',
   hl: true
 };
 const MRI_EU_MEDIAN = 20.38;
-const MRI_ROWS = [...MRI_DENSITY, MRI_MURES].sort((a, b) => b.v - a.v);
-const MRI_MAX = Math.max(...MRI_ROWS.map(r => r.v));
+const EU_PER_AVG = 49076;
+const MRI_ROWS = [...MRI_DENSITY, MRI_MURES].map(r => ({ ...r, perNum: +r.per.replace(/,/g, '') })).sort((a, b) => a.perNum - b.perNum);
+const MRI_PER_MAX = Math.max(...MRI_ROWS.map(r => r.perNum));
 const densColor = r => {
   if (r.hl) return C.accent;
-  if (r.v >= 30) return C.medima;
-  if (r.v >= 20) return C.secondary;
-  if (r.v >= 14) return '#A78BE8';
+  if (r.perNum <= 33000) return C.medima;
+  if (r.perNum <= 50000) return C.secondary;
+  if (r.perNum <= 70000) return '#A78BE8';
   return '#CBB8F0';
 };
 function SecDensity({
@@ -3249,26 +3250,19 @@ function SecDensity({
     col: C.accent,
     soft: C.accentSoft
   }, {
-    big: '47,108',
-    unit: 'people / MRI',
-    lab: 'Mureș County',
-    sub: '11 units · 518,193 population',
-    col: C.secondary,
-    soft: C.medimaSoft
-  }, {
     big: '49,076',
     unit: 'people / MRI',
     lab: 'EU average',
     sub: '20.4 MRI per million · 2023',
-    col: C.inkM,
-    soft: C.panel2
+    col: C.secondary,
+    soft: C.medimaSoft
   }];
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "MRI provision · European benchmark"), /*#__PURE__*/React.createElement(H, {
     size: isMobile ? 22 : 26
-  }, "MRI density — Mureș County vs. EU benchmark"), /*#__PURE__*/React.createElement(Sub, null, "Population served per MRI unit. Mureș County is better equipped than the EU average, but still trails the top tier (Greece, Germany, Finland, Italy)."), /*#__PURE__*/React.createElement("div", {
+  }, "MRI density — Tg Mureș city vs. EU benchmark"), /*#__PURE__*/React.createElement(Sub, null, "Population served per MRI unit (fewer is better). With 11 units for 112,587 residents, Tg Mureș city is far better equipped than any EU national average, including the top tier (Greece, Germany, Finland, Italy)."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
+      gridTemplateColumns: isMobile ? '1fr' : 'repeat(2,1fr)',
       gap: 12,
       marginBottom: 16
     }
@@ -3361,17 +3355,7 @@ function SecDensity({
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      position: 'absolute',
-      top: -2,
-      bottom: -2,
-      left: MRI_EU_MEDIAN / MRI_MAX * 100 + '%',
-      width: 0,
-      borderLeft: '2px dashed ' + C.inkF,
-      zIndex: 2
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: r.v / MRI_MAX * 100 + '%',
+      width: r.perNum / MRI_PER_MAX * 100 + '%',
       height: '100%',
       borderRadius: 5,
       background: densColor(r)
@@ -3394,7 +3378,7 @@ function SecDensity({
       borderTop: '1px solid ' + C.lineS,
       lineHeight: 1.5
     }
-  }, "Bar length scales with equipment level (MRI per million); the figure shown is inhabitants per MRI unit \u2014 fewer is better. Dashed line = EU average (20.4). Mureș County highlighted in teal.")), /*#__PURE__*/React.createElement(Card, {
+  }, "Bar length scales with inhabitants per MRI unit \u2014 shorter is better (fewer people per scanner). EU average is 49,076 people / MRI. Tg Mureș city highlighted in teal.")), /*#__PURE__*/React.createElement(Card, {
     pad: isMobile ? 14 : 18
   }, /*#__PURE__*/React.createElement("div", {
     style: {
