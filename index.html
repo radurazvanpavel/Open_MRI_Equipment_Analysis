@@ -612,8 +612,8 @@ const SCAN_REGION = [{
 /* ── Capacity model ──────────────────────────────────────────────
    Known segments/day at peer centers (provided): Sibiu 32, Alba 30, Călărași 27.
    Case-mix weights from sheet 04 (diagnostic exams): Spine 38, Abdomen&pelvis 22, Limbs 21, Head&neck 20.
-   Each peer's case-mix-weighted scan time * its seg/day = its productive scanning minutes/day.
-   Applying Tg Mureș's own scan times to those same daily minutes yields TM's implied seg/day. */
+   Per region, scale each peer's known seg/day by the relative scan speed there
+   (peer time / TM time). Overall KPI = case-mix weighted average of region results. */
 const PEER_SEG = {
   sb: 32,
   alba: 30,
@@ -628,18 +628,13 @@ const CASEMIX_W = {
 const CAP = (() => {
   const wavg = key => SCAN_REGION.reduce((a, s) => a + s[key] * (CASEMIX_W[s.r] || 0), 0);
   const tmAvg = wavg('tm');
-  const mins = {},
-    capByPeer = {};
-  ['sb', 'cal', 'alba'].forEach(c => {
-    mins[c] = PEER_SEG[c] * wavg(c);
-    capByPeer[c] = mins[c] / tmAvg;
-  });
-  const kpi = (capByPeer.sb + capByPeer.cal + capByPeer.alba) / 3;
-  // per-region: TM seg/day in that region using each peer's daily minutes
+  // Per-region projected seg/day for TM: scale each peer's known daily throughput
+  // by the relative scan speed (peer time / TM time) at that region. If TM is X% slower
+  // at a region, TM reaches X% fewer segments than that peer there.
   const region = SCAN_REGION.map(s => {
     const v = {};
     ['sb', 'cal', 'alba'].forEach(c => {
-      v[c] = mins[c] / s.tm;
+      v[c] = PEER_SEG[c] * (s[c] / s.tm);
     });
     return {
       r: s.r,
@@ -650,35 +645,29 @@ const CAP = (() => {
       avg: (v.sb + v.cal + v.alba) / 3
     };
   });
-  // ── AI scenario: AI factor = Alba(1.5T+AI)/Călărași(1.5T no AI), capped at 1.0 (AI cannot lengthen) ──
-  const tmAI = {};
-  SCAN_REGION.forEach(s => {
-    const f = Math.min(s.alba / s.cal, 1.0);
-    tmAI[s.r] = s.tm * f;
-  });
-  const tmAvgAI = SCAN_REGION.reduce((a, s) => a + tmAI[s.r] * (CASEMIX_W[s.r] || 0), 0);
-  const capByPeerAI = {};
+  // Overall KPI = case-mix weighted average of the per-region averages (stays consistent
+  // with the region rows; no separate minutes-budget construction).
+  const kpi = region.reduce((a, r) => a + r.avg * (CASEMIX_W[r.r] || 0), 0);
+  // Per-peer all-in figure (case-mix weighted), for the benchmark card.
+  const capByPeer = {};
   ['sb', 'cal', 'alba'].forEach(c => {
-    capByPeerAI[c] = mins[c] / tmAvgAI;
+    capByPeer[c] = SCAN_REGION.reduce((a, s) => a + PEER_SEG[c] * (s[c] / s.tm) * (CASEMIX_W[s.r] || 0), 0);
   });
-  const kpiAI = (capByPeerAI.sb + capByPeerAI.cal + capByPeerAI.alba) / 3;
-  const regionAI = SCAN_REGION.map(s => {
-    const v = {};
-    ['sb', 'cal', 'alba'].forEach(c => {
-      v[c] = mins[c] / tmAI[s.r];
-    });
-    return {
-      r: s.r,
-      avg: (v.sb + v.cal + v.alba) / 3
-    };
-  });
+  // ── AI scenario: single global factor from the only same-field pair (Alba 1.5T+AI vs
+  // Călărași 1.5T no AI), measured on the case-mix weighted time, capped so AI never lengthens.
+  // Applied uniformly; not split per region (per-region splits conflate case-mix/protocol with AI).
+  const aiFactor = Math.min(wavg('alba') / wavg('cal'), 1.0);
+  const kpiAI = kpi / aiFactor;
+  const regionAI = region.map(r => ({
+    r: r.r,
+    avg: r.avg / aiFactor
+  }));
   return {
     tmAvg,
-    mins,
     capByPeer,
     kpi,
     region,
-    tmAvgAI,
+    aiFactor,
     kpiAI,
     regionAI
   };
@@ -1110,6 +1099,60 @@ const SCAN_DETAIL = [{
   alba: null,
   cal: null
 }];
+
+/* ── Capacity model 2 — matched procedure pairs, no anatomical segmentation ──
+   For each peer, take only the procedures where BOTH Tg Mureș and that peer have a
+   measured time. The median of (peer time / TM time) across those procedures is the
+   relative scan speed; multiply the peer's known seg/day by it. No case-mix weights,
+   no regional grouping. AI factor = median(Alba / Călărași) over their matched pairs. */
+const median = arr => {
+  if (!arr.length) return null;
+  const a = [...arr].sort((x, y) => x - y);
+  const m = a.length >> 1;
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+};
+const CAP2 = (() => {
+  const peers = [{
+    k: 'sb',
+    l: 'Sibiu',
+    sub: '3T no AI',
+    seg: 32
+  }, {
+    k: 'cal',
+    l: 'Călărași',
+    sub: '1.5T no AI',
+    seg: 27
+  }, {
+    k: 'alba',
+    l: 'Alba Iulia',
+    sub: '1.5T + AI',
+    seg: 30
+  }];
+  const out = peers.map(p => {
+    const ratios = SCAN_DETAIL.filter(d => d[p.k] != null && d.tm != null).map(d => d[p.k] / d.tm);
+    const r = median(ratios);
+    return {
+      ...p,
+      n: ratios.length,
+      ratio: r,
+      seg_tm: p.seg * r
+    };
+  });
+  const kpi = out.reduce((a, o) => a + o.seg_tm, 0) / out.length;
+  // AI: median Alba/Călărași over procedures where both present, capped at 1.0
+  const aiRatios = SCAN_DETAIL.filter(d => d.alba != null && d.cal != null).map(d => d.alba / d.cal);
+  const aiFactor = Math.min(median(aiRatios), 1.0);
+  const aiN = aiRatios.length;
+  const kpiAI = kpi / aiFactor;
+  return {
+    peers: out,
+    kpi,
+    aiFactor,
+    aiN,
+    kpiAI,
+    max: Math.max(...out.map(o => o.seg_tm))
+  };
+})();
 
 /* Slide 7 / 9 — referrals by specialty (of 575 valid, 30 specialties) */
 const REFERRALS = [{
@@ -1649,46 +1692,7 @@ function Cover({
       maxWidth: 520,
       lineHeight: 1.5
     }
-  }, "Volume \xB7 Productivity \xB7 Operational efficiency vs. the Sibiu benchmark"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: isMobile ? '18px 22px' : '0',
-      marginTop: isMobile ? 28 : 38,
-      borderTop: isMobile ? 'none' : '1px solid rgba(255,255,255,.18)',
-      paddingTop: isMobile ? 0 : 24
-    }
-  }, [{
-    v: '+104%',
-    l: 'above the 1.5T median'
-  }, {
-    v: '#2 / 31',
-    l: 'network ramp-up'
-  }, {
-    v: '5.0★',
-    l: 'referrer rating'
-  }].map((k, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    style: {
-      paddingRight: isMobile ? 0 : 34,
-      marginRight: isMobile ? 0 : 34,
-      borderRight: !isMobile && i < 2 ? '1px solid rgba(255,255,255,.18)' : 'none'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "'Red Hat Display',sans-serif",
-      fontWeight: 900,
-      fontSize: isMobile ? 26 : 32,
-      lineHeight: 1
-    }
-  }, k.v), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11.5,
-      color: C.lilac,
-      marginTop: 5,
-      maxWidth: 120
-    }
-  }, k.l)))), /*#__PURE__*/React.createElement("div", {
+  }, "Volume \xB7 Productivity \xB7 Efficiency \xB7 Quality"), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: isMobile ? 30 : 40,
       display: 'flex',
@@ -1732,8 +1736,8 @@ function SecSummary({
 }) {
   // Board-relevant KPIs: each is a benchmark-relative performance ratio, with a fill bar showing where it sits.
   const kpis = [{
-    v: '+104%',
-    l: 'above the 1.5T median',
+    v: '2×',
+    l: 'the 1.5T median',
     s: '10.9 vs 5.3 seg/day · before NHS',
     fill: 100,
     tone: C.medima,
@@ -1974,10 +1978,9 @@ function SecRampup({
     }
   }, t.l))), /*#__PURE__*/React.createElement("div", {
     style: {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.85fr) minmax(300px,1fr)',
-      gap: 16,
-      alignItems: 'start'
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16
     }
   }, /*#__PURE__*/React.createElement(Card, {
     pad: isMobile ? 12 : 18
@@ -2235,72 +2238,45 @@ function SecRampup({
     }
   }, "T\xE2rgu Mure\u0219 is the network\u2019s only Open 1.2T unit. Even so, its before-NHS throughput sits at roughly double the 1.5T class average \u2014 the field-strength gap is not visible in real-world volume."))), /*#__PURE__*/React.createElement("div", {
     style: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
       gap: 12
     }
   }, /*#__PURE__*/React.createElement(Card, {
-    pad: 16,
+    pad: 18,
     style: {
       background: C.medimaSoft,
       border: '1px solid ' + C.medima
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      fontFamily: "'Red Hat Display',sans-serif",
-      fontWeight: 900,
-      fontSize: 40,
-      color: C.medima,
-      lineHeight: 1
-    }
-  }, "+104%"), /*#__PURE__*/React.createElement("div", {
-    style: {
       fontSize: 13,
-      fontWeight: 700,
-      color: C.ink,
-      marginTop: 4
+      fontWeight: 800,
+      color: C.medima,
+      marginBottom: 6
     }
-  }, "above the 1.5T median"), /*#__PURE__*/React.createElement("div", {
+  }, "Well above the mature-peer benchmark"), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 12,
+      fontSize: 12.5,
       color: C.inkM,
-      marginTop: 6,
-      lineHeight: 1.5
+      lineHeight: 1.55
     }
-  }, "10.9 vs a ", T15_MEDIAN, " seg/day median across 24 mature 1.5T centers. The honest peer comparison, and Tg Mure\u0219 still doubles it.")), /*#__PURE__*/React.createElement(Card, {
-    pad: 16
+  }, "Before NHS, Tg Mure\u0219 runs at roughly double the median of the 24 mature 1.5T centers \u2014 the honest peer comparison, and an Open 1.2T unit clears it comfortably.")), /*#__PURE__*/React.createElement(Card, {
+    pad: 18
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      display: 'flex',
-      alignItems: 'baseline',
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "'Red Hat Display',sans-serif",
-      fontWeight: 900,
-      fontSize: 30,
-      color: C.secondary,
-      lineHeight: 1
-    }
-  }, "94th"), /*#__PURE__*/React.createElement("span", {
-    style: {
       fontSize: 13,
-      fontWeight: 700,
-      color: C.ink
+      fontWeight: 800,
+      color: C.ink,
+      marginBottom: 6
     }
-  }, "percentile")), /*#__PURE__*/React.createElement("div", {
+  }, "Near the top of the network"), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 12,
+      fontSize: 12.5,
       color: C.inkM,
-      marginTop: 6,
-      lineHeight: 1.5
+      lineHeight: 1.55
     }
-  }, "Ranked ", /*#__PURE__*/React.createElement("b", {
-    style: {
-      color: C.medima
-    }
-  }, "2nd of 31"), " centers; only Virtu\u021Bii is marginally above. \u201CBefore NHS\u201D strips out reimbursed volume, so this is pure early demand.")))));
+  }, "Among the highest before-NHS throughput in the network, with only one center marginally above. \u201CBefore NHS\u201D strips out reimbursed volume, so this reflects pure early demand.")))));
 }
 
 /* ════════════════════ PRODUCTIVITY vs SIBIU (diverging + radar-style) ════════════════════ */
@@ -2662,11 +2638,11 @@ function SecScantimes({
     id: 'region',
     l: 'By region'
   }, {
-    id: 'detail',
-    l: 'By procedure'
-  }, {
     id: 'capacity',
     l: 'Capacity'
+  }, {
+    id: 'detail',
+    l: 'By procedure'
   }].map(v => /*#__PURE__*/React.createElement("button", {
     key: v.id,
     onClick: () => setView(v.id),
@@ -3040,40 +3016,31 @@ function SecScantimes({
       color: C.secondary,
       marginBottom: 4
     }
-  }, "Projected segments/day by region"), /*#__PURE__*/React.createElement("div", {
+  }, "Projected segments/day"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 11.5,
       color: C.inkM,
       lineHeight: 1.5,
-      marginBottom: 16
+      marginBottom: 18
     }
-  }, "Peer centers run a known throughput (Sibiu 32, Alba Iulia 30, C\u0103l\u0103ra\u0219i 27 seg/day). Applying their productive scanning minutes to Tg Mure\u0219\u2019s own scan times gives the segments/day Tg Mure\u0219 could reach per region."), CAP.region.map((s, ri) => {
-    const mx = Math.max(...CAP.region.flatMap(z => [z.sb, z.cal, z.alba]));
-    const bars = [{
-      k: 'sb',
-      l: 'vs Sibiu',
-      c: '#7D5DE7'
-    }, {
-      k: 'cal',
-      l: 'vs Călărași',
-      c: '#C9A23A'
-    }, {
-      k: 'alba',
-      l: 'vs Alba',
-      c: C.accent
-    }];
-    const aiAvg = CAP.regionAI[ri].avg;
+  }, "For each peer we keep only the procedures where both Tg Mure\u0219 and that peer have a measured time, then take the median of their time ratio as the relative scan speed. Multiplying the peer\u2019s known throughput by it gives the segments/day Tg Mure\u0219 could reach. No case mix, no anatomical grouping."), CAP2.peers.map(p => {
+    const cols = {
+      sb: '#7D5DE7',
+      cal: '#C9A23A',
+      alba: C.accent
+    };
+    const slower = (1 / p.ratio - 1) * 100;
     return /*#__PURE__*/React.createElement("div", {
-      key: s.r,
+      key: p.k,
       style: {
-        marginBottom: 16
+        marginBottom: 18
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'baseline',
-        marginBottom: 7
+        marginBottom: 6
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
@@ -3081,57 +3048,66 @@ function SecScantimes({
         fontWeight: 800,
         color: C.ink
       }
-    }, s.r), /*#__PURE__*/React.createElement("span", {
+    }, "vs ", p.l, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontSize: 12,
-        fontWeight: 700,
+        fontSize: 10.5,
+        fontWeight: 600,
+        color: C.inkF,
+        marginLeft: 6
+      }
+    }, p.sub, " \xB7 ", p.seg, " seg/day \xB7 ", p.n, " shared")), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 800,
+        color: C.medima
+      }
+    }, "~", p.seg_tm.toFixed(1), " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        fontWeight: 600,
         color: C.inkM
       }
-    }, "~", s.avg.toFixed(0), /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: C.ok,
-        fontWeight: 800
-      }
-    }, " \u2192 ~", aiAvg.toFixed(0), " with AI"), " seg/day")), bars.map(bar => /*#__PURE__*/React.createElement("div", {
-      key: bar.k,
+    }, "seg/day"))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
-        marginBottom: 3
+        gap: 8
       }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        width: isMobile ? 64 : 78,
-        fontSize: 10.5,
-        color: C.inkM,
-        flexShrink: 0
-      }
-    }, bar.l), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1,
-        height: 12,
+        height: 14,
         background: C.lineS,
         borderRadius: 5,
         overflow: 'hidden'
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: s[bar.k] / mx * 100 + '%',
+        width: p.seg_tm / CAP2.max * 100 + '%',
         height: '100%',
         borderRadius: 5,
-        background: bar.c
+        background: cols[p.k]
       }
     })), /*#__PURE__*/React.createElement("span", {
       style: {
-        width: 38,
-        fontSize: 11.5,
-        fontWeight: 700,
+        width: isMobile ? 96 : 120,
+        fontSize: 10.5,
+        fontWeight: 600,
         color: C.inkM,
-        textAlign: 'right'
+        textAlign: 'right',
+        whiteSpace: 'nowrap'
       }
-    }, s[bar.k].toFixed(1)))));
-  })), /*#__PURE__*/React.createElement("div", {
+    }, slower <= 0 ? 'faster' : slower.toFixed(0) + '% slower', " than ", p.l)));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10.5,
+      color: C.inkF,
+      lineHeight: 1.5,
+      marginTop: 4,
+      paddingTop: 12,
+      borderTop: '1px solid ' + C.lineS
+    }
+  }, "Median ratio is robust to outlier procedures. Tg Mure\u0219 nearly matches Sibiu 3T on shared procedures despite the field-strength gap, so Sibiu sets the upper bound.")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -3151,7 +3127,7 @@ function SecScantimes({
       color: C.medima,
       lineHeight: 1
     }
-  }, "~", CAP.kpi.toFixed(0)), /*#__PURE__*/React.createElement("div", {
+  }, "~", CAP2.kpi.toFixed(0)), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       fontWeight: 700,
@@ -3165,7 +3141,7 @@ function SecScantimes({
       marginTop: 8,
       lineHeight: 1.55
     }
-  }, "Weighted by the sheet-04 case mix (spine 38%, abdomen & pelvis 22%, limbs 21%, head & neck 20%) and averaged across the three peers. This is the all-in capacity Tg Mure\u0219 could sustain at peer working hours.")), /*#__PURE__*/React.createElement(Card, {
+  }, "Average of the three peer estimates, each built from matched procedure pairs only. No case-mix assumptions and no regional split, so the figure rests purely on like-for-like measured scan times.")), /*#__PURE__*/React.createElement(Card, {
     pad: 18,
     style: {
       background: C.accentSoft,
@@ -3185,7 +3161,7 @@ function SecScantimes({
       color: C.ok,
       lineHeight: 1
     }
-  }, "~", CAP.kpiAI.toFixed(0)), /*#__PURE__*/React.createElement("span", {
+  }, "~", CAP2.kpiAI.toFixed(0)), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 13,
       fontWeight: 700,
@@ -3198,7 +3174,7 @@ function SecScantimes({
       marginTop: 8,
       lineHeight: 1.55
     }
-  }, "Scenario if Tg Mure\u0219 added AI reconstruction (about +", (CAP.kpiAI - CAP.kpi).toFixed(0), " seg/day, ~", ((CAP.kpiAI / CAP.kpi - 1) * 100).toFixed(0), "%). Estimated from the Alba Iulia vs. C\u0103l\u0103ra\u0219i gap (the only same-field 1.5T pair, with vs. without AI), applied to Tg Mure\u0219\u2019s times and capped so AI never lengthens a scan.")), /*#__PURE__*/React.createElement(Card, {
+  }, "Scenario if Tg Mure\u0219 added AI reconstruction (about +", (CAP2.kpiAI - CAP2.kpi).toFixed(0), " seg/day, ~", ((CAP2.kpiAI / CAP2.kpi - 1) * 100).toFixed(0), "%). Factor is the median time ratio of Alba Iulia (1.5T + AI) vs. C\u0103l\u0103ra\u0219i (1.5T no AI) across their ", CAP2.aiN, " shared procedures, capped so AI never lengthens a scan.")), /*#__PURE__*/React.createElement(Card, {
     pad: 16
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3207,16 +3183,7 @@ function SecScantimes({
       color: C.ink,
       marginBottom: 8
     }
-  }, "By peer benchmark"), [{
-    k: 'sb',
-    l: 'Sibiu (32 seg/day)'
-  }, {
-    k: 'cal',
-    l: 'Călărași (27 seg/day)'
-  }, {
-    k: 'alba',
-    l: 'Alba Iulia (30 seg/day)'
-  }].map(p => /*#__PURE__*/React.createElement("div", {
+  }, "By peer benchmark"), CAP2.peers.map(p => /*#__PURE__*/React.createElement("div", {
     key: p.k,
     style: {
       display: 'flex',
@@ -3229,20 +3196,20 @@ function SecScantimes({
       fontSize: 11.5,
       color: C.inkM
     }
-  }, p.l), /*#__PURE__*/React.createElement("span", {
+  }, p.l, " (", p.seg, " seg/day)"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 13,
       fontWeight: 800,
       color: C.medima
     }
-  }, "~", CAP.capByPeer[p.k].toFixed(0), " seg/day"))), /*#__PURE__*/React.createElement("div", {
+  }, "~", p.seg_tm.toFixed(0), " seg/day"))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 11,
       color: C.inkF,
       marginTop: 8,
       lineHeight: 1.5
     }
-  }, "The spread reflects different working hours: Sibiu scans the most minutes/day, so it sets the upper bound.")))));
+  }, "Each figure scales that peer\u2019s throughput by the median time ratio over the procedures the two centers share.")))));
 }
 
 /* ════════════════════ REFERRALS ════════════════════ */
@@ -4080,7 +4047,7 @@ function SecCaseload({
   const segColor = r => REG_COLOR[r] || '#D9D2E8';
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "Case mix \xB7 what the unit scans"), /*#__PURE__*/React.createElement(H, {
     size: isMobile ? 22 : 26
-  }, "A spine and neuro core, with broad coverage"), /*#__PURE__*/React.createElement(Sub, null, "The clinical profile of the Open 1.2T by anatomical region (Andreea\u2019s grouping), across ", denom, " diagnostic examinations. Non-diagnostic consults/controls are excluded."), /*#__PURE__*/React.createElement(Card, {
+  }, "A spine and neuro core, with broad coverage"), /*#__PURE__*/React.createElement(Sub, null, "The clinical profile of the Open 1.2T by anatomical region, across ", denom, " diagnostic examinations. Non-diagnostic consults/controls are excluded."), /*#__PURE__*/React.createElement(Card, {
     pad: isMobile ? 18 : 28
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -4634,19 +4601,20 @@ function App() {
     ref: scrollRef,
     style: {
       flex: 1,
-      padding: '34px 48px 40px',
+      padding: '30px 40px 36px',
       overflowY: 'auto',
       maxHeight: '100vh',
       background: C.bg
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      maxWidth: 1320,
+      maxWidth: 1680,
       width: '100%',
       margin: '0 auto',
       minHeight: 'calc(100vh - 74px)',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      zoom: 1.18
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
