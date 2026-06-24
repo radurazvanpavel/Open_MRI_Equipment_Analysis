@@ -349,7 +349,8 @@ const C = {
   medimaSoft: '#F1EAFB',
   accentSoft: '#E7F8F5',
   okSoft: '#E6F6F3',
-  warnSoft: '#FBF1E0'
+  warnSoft: '#FBF1E0',
+  gold: '#E8B33A'
 };
 
 /* ════════════════════ DATA (verified 1:1 against Andreea's deck + source Excels) ════════════════════ */
@@ -3230,9 +3231,62 @@ const MRI_MURES = {
 };
 const MRI_EU_MEDIAN = 20.38;
 const EU_PER_AVG = 49076;
-const MRI_ROWS = [...MRI_DENSITY, MRI_MURES].map(r => ({ ...r, perNum: +r.per.replace(/,/g, '') })).sort((a, b) => a.perNum - b.perNum);
+// ─── România (linie națională în grafic) ───────────────────────────────
+// People/MRI = 19.053.815 (RPL 2021) ÷ 357 RMN total (247 priv + 110 pub, date interne Medima).
+const MRI_RO = {
+  c: 'România',
+  v: 18.74,           // MRI per million (357 / 19.05M)
+  per: '53,372',      // people / MRI
+  ro: true,
+  include: true
+};
+const MRI_ROWS = [...MRI_DENSITY, MRI_MURES, ...(MRI_RO.include ? [MRI_RO] : [])]
+  .map(r => ({ ...r, perNum: +r.per.replace(/,/g, '') }))
+  .sort((a, b) => a.perNum - b.perNum);
 const MRI_PER_MAX = Math.max(...MRI_ROWS.map(r => r.perNum));
+// ─── Orașe Medima România (people / MRI, RMN la nivel oraș) ─────────────
+const MEDIMA_RO = [
+  { c: 'Petroșani', pop: 31044, mri_total: 3, per: '10,348', per_num: 10348, v: 96.64, hl: false },
+  { c: 'Târgu Mureș', pop: 116033, mri_total: 11, per: '10,548', per_num: 10548, v: 94.80, hl: true },
+  { c: 'Târgoviște', pop: 66965, mri_total: 6, per: '11,161', per_num: 11161, v: 89.60 },
+  { c: 'Miercurea Ciuc', pop: 34484, mri_total: 3, per: '11,495', per_num: 11495, v: 86.99 },
+  { c: 'Zalău', pop: 52359, mri_total: 4, per: '13,090', per_num: 13090, v: 76.39 },
+  { c: 'Vaslui', pop: 63035, mri_total: 4, per: '15,759', per_num: 15759, v: 63.46 },
+  { c: 'Focșani', pop: 66648, mri_total: 4, per: '16,662', per_num: 16662, v: 60.02 },
+  { c: 'București', pop: 1716961, mri_total: 100, per: '17,170', per_num: 17170, v: 58.24, clinici: 3 },
+  { c: 'Deva', pop: 53113, mri_total: 3, per: '17,704', per_num: 17704, v: 56.48 },
+  { c: 'Botoșani', pop: 90010, mri_total: 5, per: '18,002', per_num: 18002, v: 55.55 },
+  { c: 'Reșița', pop: 58393, mri_total: 3, per: '19,464', per_num: 19464, v: 51.38 },
+  { c: 'Bistrița', pop: 78877, mri_total: 4, per: '19,719', per_num: 19719, v: 50.71 },
+  { c: 'Alexandria', pop: 40390, mri_total: 2, per: '20,195', per_num: 20195, v: 49.52 },
+  { c: 'Alba Iulia', pop: 64227, mri_total: 3, per: '21,409', per_num: 21409, v: 46.71 },
+  { c: 'Otopeni', pop: 21750, mri_total: 1, per: '21,750', per_num: 21750, v: 45.98 },
+  { c: 'Baia Mare', pop: 108759, mri_total: 5, per: '21,752', per_num: 21752, v: 45.97 },
+  { c: 'Galați', pop: 217851, mri_total: 10, per: '21,785', per_num: 21785, v: 45.90 },
+  { c: 'Bacău', pop: 136087, mri_total: 6, per: '22,681', per_num: 22681, v: 44.09 },
+  { c: 'Satu Mare', pop: 91520, mri_total: 4, per: '22,880', per_num: 22880, v: 43.71 },
+  { c: 'Craiova', pop: 234140, mri_total: 9, per: '26,016', per_num: 26016, v: 38.44 },
+  { c: 'Oradea', pop: 183105, mri_total: 7, per: '26,158', per_num: 26158, v: 38.23 },
+  { c: 'Arad', pop: 145078, mri_total: 5, per: '29,016', per_num: 29016, v: 34.46 },
+  { c: 'Călărași', pop: 58211, mri_total: 2, per: '29,106', per_num: 29106, v: 34.36 },
+  { c: 'Tulcea', pop: 65624, mri_total: 2, per: '32,812', per_num: 32812, v: 30.48 },
+  { c: 'Buzău', pop: 103481, mri_total: 3, per: '34,494', per_num: 34494, v: 28.99 },
+  { c: 'Târgu Jiu', pop: 73545, mri_total: 2, per: '36,772', per_num: 36772, v: 27.19 },
+  { c: 'Brăila', pop: 154686, mri_total: 4, per: '38,672', per_num: 38672, v: 25.86 },
+  { c: 'Slobozia', pop: 41550, mri_total: 1, per: '41,550', per_num: 41550, v: 24.07 },
+  { c: 'Giurgiu', pop: 54551, mri_total: 1, per: '54,551', per_num: 54551, v: 18.33 },
+  { c: 'Sibiu', pop: 134309, mri_total: 2, per: '67,154', per_num: 67154, v: 14.89 },
+].sort((a, b) => a.per_num - b.per_num);
+const MEDIMA_RO_MAX = Math.max(...MEDIMA_RO.map(r => r.per_num));
+const densColorRO = r => {
+  if (r.hl) return C.accent;
+  if (r.per_num <= 33000) return C.medima;
+  if (r.per_num <= 50000) return C.secondary;
+  if (r.per_num <= 70000) return '#A78BE8';
+  return '#CBB8F0';
+};
 const densColor = r => {
+  if (r.ro) return C.gold;
   if (r.hl) return C.accent;
   if (r.perNum <= 33000) return C.medima;
   if (r.perNum <= 50000) return C.secondary;
@@ -3242,237 +3296,93 @@ const densColor = r => {
 function SecDensity({
   isMobile
 }) {
+  const h = React.createElement;
   const KPIS = [{
-    big: '9,382',
-    unit: 'people / MRI',
-    lab: 'Tg Mureș city',
-    sub: '12 units · 112,587 population',
-    col: C.accent,
-    soft: C.accentSoft
+    big: '9,382', unit: 'people / MRI', lab: 'Tg Mureș city',
+    sub: '12 units · 112,587 population', col: C.accent, soft: C.accentSoft
   }, {
-    big: '49,076',
-    unit: 'people / MRI',
-    lab: 'EU average',
-    sub: '20.4 MRI per million · 2023',
-    col: C.secondary,
-    soft: C.medimaSoft
+    big: '53,372', unit: 'people / MRI', lab: 'România',
+    sub: '357 MRI total · 18.7 per million', col: C.gold, soft: '#FBF3E0'
+  }, {
+    big: '49,076', unit: 'people / MRI', lab: 'EU average',
+    sub: '20.4 MRI per million · 2023', col: C.secondary, soft: C.medimaSoft
   }];
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Kicker, null, "MRI provision · European benchmark"), /*#__PURE__*/React.createElement(H, {
-    size: isMobile ? 22 : 26
-  }, "MRI density — Tg Mureș city vs. EU benchmark"), /*#__PURE__*/React.createElement(Sub, null, "Population served per MRI unit (fewer is better). With 12 units for 112,587 residents, Tg Mureș city is far better equipped than any EU national average, including the top tier (Greece, Germany, Finland, Italy)."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'repeat(2,1fr)',
-      gap: 12,
-      marginBottom: 16
-    }
-  }, KPIS.map((k, i) => /*#__PURE__*/React.createElement(Card, {
-    key: i,
-    pad: 16,
-    style: {
-      borderTop: '3px solid ' + k.col,
-      background: k.soft
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 10.5,
-      fontWeight: 700,
-      letterSpacing: '.05em',
-      textTransform: 'uppercase',
-      color: C.inkM,
-      marginBottom: 6
-    }
-  }, k.lab), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'baseline',
-      gap: 5
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "'Red Hat Display',sans-serif",
-      fontWeight: 900,
-      fontSize: 32,
-      color: k.col,
-      lineHeight: 1
-    }
-  }, k.big), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      color: C.inkM
-    }
-  }, k.unit)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: C.inkF,
-      marginTop: 6,
-      lineHeight: 1.45
-    }
-  }, k.sub)))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.6fr) minmax(260px,1fr)',
-      gap: 16,
-      alignItems: 'start'
-    }
-  }, /*#__PURE__*/React.createElement(Card, {
-    pad: isMobile ? 14 : 20
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: '.06em',
-      textTransform: 'uppercase',
-      color: C.secondary,
-      marginBottom: 14
-    }
-  }, "Population served per MRI unit (people / MRI)"), MRI_ROWS.map((r, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      marginBottom: 8
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      width: 92,
-      flexShrink: 0,
-      fontSize: 11.5,
-      fontWeight: r.hl ? 800 : 600,
-      color: r.hl ? C.ink : C.inkM,
-      textAlign: 'right'
-    }
-  }, r.c), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      height: 18,
-      background: C.lineS,
-      borderRadius: 5,
-      overflow: 'hidden',
-      position: 'relative'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: r.perNum / MRI_PER_MAX * 100 + '%',
-      height: '100%',
-      borderRadius: 5,
-      background: densColor(r)
-    }
-  })), /*#__PURE__*/React.createElement("span", {
-    style: {
-      width: 58,
-      flexShrink: 0,
-      fontSize: 11.5,
-      fontWeight: 800,
-      color: r.hl ? C.accent : C.ink,
-      textAlign: 'right'
-    }
-  }, r.per))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 10.5,
-      color: C.inkF,
-      marginTop: 10,
-      paddingTop: 10,
-      borderTop: '1px solid ' + C.lineS,
-      lineHeight: 1.5
-    }
-  }, "Bar length scales with inhabitants per MRI unit \u2014 shorter is better (fewer people per scanner). EU average is 49,076 people / MRI. Tg Mureș city highlighted in teal.")), /*#__PURE__*/React.createElement(Card, {
-    pad: isMobile ? 14 : 18
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: '.06em',
-      textTransform: 'uppercase',
-      color: C.secondary,
-      marginBottom: 14
-    }
-  }, "Mureș market — at a glance"), [{
-    lab: 'Tg Mureș city population',
-    val: '112,587',
-    note: 'RPL 2021'
-  }, {
-    lab: 'Mureș County population',
-    val: '518,193',
-    note: 'RPL 2021'
-  }, {
-    lab: 'Private MRI units',
-    val: '9',
-    col: C.accent
-  }, {
-    lab: 'Public MRI units',
-    val: '3',
-    col: C.secondary
-  }, {
-    lab: 'Total MRI units',
-    val: '12',
-    strong: true
-  }].map((row, i, arr) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'baseline',
-      padding: '9px 0',
-      borderBottom: i < arr.length - 1 ? '1px solid ' + C.lineS : 'none'
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11.5,
-      fontWeight: row.strong ? 800 : 500,
-      color: row.strong ? C.ink : C.inkM
-    }
-  }, row.lab, row.note ? /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 9.5,
-      color: C.inkF,
-      marginLeft: 6
-    }
-  }, row.note) : null), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "'Red Hat Display',sans-serif",
-      fontSize: row.strong ? 18 : 15,
-      fontWeight: 900,
-      color: row.col || (row.strong ? C.medima : C.ink)
-    }
-  }, row.val))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 10.5,
-      color: C.inkF,
-      marginTop: 12,
-      lineHeight: 1.5
-    }
-  }, "County MRI density: 518,193 \u00F7 11 = 47,108 people per MRI (21.2 per million)."))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: 8,
-      marginTop: 16,
-      paddingTop: 12,
-      borderTop: '1px solid ' + C.line,
-      fontSize: 10.5,
-      color: C.inkF
-    }
-  }, /*#__PURE__*/React.createElement("span", null, "Sources: ", /*#__PURE__*/React.createElement("a", {
-    href: "https://www.oecd.org/en/data/indicators/magnetic-resonance-imaging-mri-units.html",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    style: {
-      color: C.secondary,
-      fontWeight: 700,
-      textDecoration: 'none'
-    }
-  }, "OECD MRI units (per million inhabitants, 2023, EU countries)"), " · INS Census RPL 2021 · Medima internal data"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 800,
-      letterSpacing: '.06em',
-      color: C.medima
-    }
-  }, "MEDIMA HEALTH — Business Development")));
+
+  // KPI card
+  const kpiCard = (k, i) => h(Card, {
+    key: i, pad: 16, style: { borderTop: '3px solid ' + k.col, background: k.soft }
+  },
+    h('div', { style: { fontSize: 10.5, fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase', color: C.inkM, marginBottom: 6 } }, k.lab),
+    h('div', { style: { display: 'flex', alignItems: 'baseline', gap: 5 } },
+      h('span', { style: { fontFamily: "'Red Hat Display',sans-serif", fontWeight: 900, fontSize: 30, color: k.col, lineHeight: 1 } }, k.big),
+      h('span', { style: { fontSize: 11, fontWeight: 700, color: C.inkM } }, k.unit)),
+    h('div', { style: { fontSize: 11, color: C.inkF, marginTop: 6, lineHeight: 1.45 } }, k.sub));
+
+  // one bar row (shared by both charts)
+  const barRow = (label, per, perNum, maxNum, color, opts, i) => {
+    opts = opts || {};
+    return h('div', { key: i, style: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 } },
+      h('span', { style: { width: opts.labelW || 92, flexShrink: 0, fontSize: 11, fontWeight: opts.bold ? 800 : 600, color: opts.labelColor || C.inkM, textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, label),
+      h('div', { style: { flex: 1, height: 16, background: C.lineS, borderRadius: 5, overflow: 'hidden' } },
+        h('div', { style: { width: (perNum / maxNum * 100) + '%', height: '100%', borderRadius: 5, background: color } })),
+      h('span', { style: { width: 52, flexShrink: 0, fontSize: 11, fontWeight: 800, color: opts.valColor || C.ink, textAlign: 'right' } }, per));
+  };
+
+  // LEFT chart: EU countries + Romania + Tg Mureș
+  const euChart = h(Card, { pad: isMobile ? 14 : 18 },
+    h('div', { style: { fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: C.secondary, marginBottom: 4 } }, 'EU countries · people / MRI'),
+    h('div', { style: { fontSize: 10.5, color: C.inkF, marginBottom: 12, lineHeight: 1.45 } }, 'National averages (OECD 2023). Tg Mureș city in teal, Romania in gold; shorter is better.'),
+    h('div', null, MRI_ROWS.map((r, i) => barRow(
+      r.c, r.per, r.perNum, MRI_PER_MAX, densColor(r),
+      { bold: r.hl || r.ro, labelColor: r.ro ? C.gold : (r.hl ? C.ink : C.inkM), valColor: r.ro ? C.gold : (r.hl ? C.accent : C.ink) }, i))),
+    h('div', { style: { fontSize: 10, color: C.inkF, marginTop: 10, paddingTop: 10, borderTop: '1px solid ' + C.lineS, lineHeight: 1.5 } },
+      'EU average 49,076 people / MRI. Romania: 357 MRI total (247 private + 110 public), date interne Medima.'));
+
+  // RIGHT chart: Medima cities (two sub-columns to stay compact)
+  const half = Math.ceil(MEDIMA_RO.length / 2);
+  const roCol = (slice, offset) => h('div', { style: { flex: 1, minWidth: 0 } },
+    slice.map((r, i) => barRow(r.c, r.per, r.per_num, MEDIMA_RO_MAX, densColorRO(r),
+      { labelW: 78, bold: r.hl, labelColor: r.hl ? C.accent : C.inkM, valColor: r.hl ? C.accent : C.ink }, offset + i)));
+  const roChart = h(Card, { pad: isMobile ? 14 : 18 },
+    h('div', { style: { fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: C.secondary, marginBottom: 4 } }, 'Medima cities · people / MRI'),
+    h('div', { style: { fontSize: 10.5, color: C.inkF, marginBottom: 12, lineHeight: 1.45 } }, '30 Medima cities, same metric (city population ÷ MRI units in the city). Tg Mureș in teal.'),
+    h('div', { style: { display: 'flex', gap: 18 } }, roCol(MEDIMA_RO.slice(0, half), 0), roCol(MEDIMA_RO.slice(half), half)),
+    h('div', { style: { fontSize: 10, color: C.inkF, marginTop: 10, paddingTop: 10, borderTop: '1px solid ' + C.lineS, lineHeight: 1.5 } },
+      'MRI units counted at city level (county seats; county totals used as proxy), date interne Medima. Population: INS Census RPL 2021.'));
+
+  // Full-width "at a glance" strip
+  const glanceItems = [
+    { lab: 'Tg Mureș city pop.', val: '112,587', note: 'RPL 2021' },
+    { lab: 'Mureș County pop.', val: '518,193', note: 'RPL 2021' },
+    { lab: 'Private MRI', val: '9', col: C.accent },
+    { lab: 'Public MRI', val: '3', col: C.secondary },
+    { lab: 'Total MRI', val: '12', strong: true }
+  ];
+  const glance = h(Card, { pad: isMobile ? 14 : 18, style: { marginTop: 16 } },
+    h('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 14 : 28 } },
+      h('div', { style: { fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: C.secondary, marginRight: 4 } }, 'Mureș market'),
+      glanceItems.map((row, i) => h('div', { key: i, style: { display: 'flex', alignItems: 'baseline', gap: 7 } },
+        h('span', { style: { fontSize: 11.5, fontWeight: row.strong ? 800 : 500, color: row.strong ? C.ink : C.inkM } }, row.lab,
+          row.note ? h('span', { style: { fontSize: 9.5, color: C.inkF, marginLeft: 5 } }, row.note) : null),
+        h('span', { style: { fontFamily: "'Red Hat Display',sans-serif", fontSize: row.strong ? 18 : 16, fontWeight: 900, color: row.col || (row.strong ? C.medima : C.ink) } }, row.val))),
+      h('div', { style: { fontSize: 10.5, color: C.inkF, flexBasis: '100%', marginTop: 4, lineHeight: 1.5 } },
+        'County MRI density: 518,193 ÷ 11 = 47,108 people per MRI (21.2 per million), date interne Medima.')));
+
+  // sources
+  const sources = h('div', { style: { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginTop: 16, paddingTop: 12, borderTop: '1px solid ' + C.line, fontSize: 10.5, color: C.inkF } },
+    h('span', null, 'Sources: ',
+      h('a', { href: 'https://www.oecd.org/en/data/indicators/magnetic-resonance-imaging-mri-units.html', target: '_blank', rel: 'noopener noreferrer', style: { color: C.secondary, fontWeight: 700, textDecoration: 'none' } }, 'OECD MRI units (per million inhabitants, 2023, EU countries)'),
+      ' · INS Census RPL 2021 · Medima internal data'),
+    h('span', { style: { fontWeight: 800, letterSpacing: '.06em', color: C.medima } }, 'MEDIMA HEALTH — Business Development'));
+
+  return h('div', null,
+    h(Kicker, null, 'MRI provision · European benchmark'),
+    h(H, { size: isMobile ? 22 : 26 }, 'MRI density — Tg Mureș vs. Romania & EU benchmark'),
+    h(Sub, null, 'Population served per MRI unit (fewer is better). With 12 units for 112,587 residents, Tg Mureș city is far better equipped than the national or any EU average.'),
+    h('div', { style: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: 12, marginBottom: 16 } }, KPIS.map(kpiCard)),
+    h('div', { style: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16, alignItems: 'start' } }, euChart, roChart),
+    glance,
+    sources);
 }
 
 /* ════════════════════ REFERRALS ════════════════════ */
